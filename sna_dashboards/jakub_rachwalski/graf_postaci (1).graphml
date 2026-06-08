@@ -1,0 +1,1300 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><key id="d1" for="edge" attr.name="weight" attr.type="long"/>
+<key id="d0" for="node" attr.name="label" attr.type="string"/>
+<graph edgedefault="undirected"><node id="DJANGO">
+  <data key="d0">DJANGO</data>
+</node>
+<node id="MOGUY">
+  <data key="d0">MOGUY</data>
+</node>
+<node id="CALVIN CANDIE">
+  <data key="d0">CALVIN CANDIE</data>
+</node>
+<node id="CALVIN CANDLE">
+  <data key="d0">CALVIN CANDLE</data>
+</node>
+<node id="STEPHEN">
+  <data key="d0">STEPHEN</data>
+</node>
+<node id="ACE WOODY">
+  <data key="d0">ACE WOODY</data>
+</node>
+<node id="LARA LEE">
+  <data key="d0">LARA LEE</data>
+</node>
+<node id="TIMMY">
+  <data key="d0">TIMMY</data>
+</node>
+<node id="BROOMHILDA">
+  <data key="d0">BROOMHILDA</data>
+</node>
+<node id="SPENCER">
+  <data key="d0">SPENCER</data>
+</node>
+<node id="SPENCER BENNETT">
+  <data key="d0">SPENCER BENNETT</data>
+</node>
+<node id="RODNEY">
+  <data key="d0">RODNEY</data>
+</node>
+<node id="ROY">
+  <data key="d0">ROY</data>
+</node>
+<node id="BETINA">
+  <data key="d0">BETINA</data>
+</node>
+<node id="LITTLE RAJ">
+  <data key="d0">LITTLE RAJ</data>
+</node>
+<node id="SCHULTZ">
+  <data key="d0">SCHULTZ</data>
+</node>
+<node id="NARRATOR">
+  <data key="d0">NARRATOR</data>
+</node>
+<node id="SCOTTY">
+  <data key="d0">SCOTTY</data>
+</node>
+<node id="CHESTER">
+  <data key="d0">CHESTER</data>
+</node>
+<node id="CHICKEN CHARLY">
+  <data key="d0">CHICKEN CHARLY</data>
+</node>
+<node id="FLOYD">
+  <data key="d0">FLOYD</data>
+</node>
+<node id="JANO">
+  <data key="d0">JANO</data>
+</node>
+<node id="ACE SPEC">
+  <data key="d0">ACE SPEC</data>
+</node>
+<node id="ACE SPECK">
+  <data key="d0">ACE SPECK</data>
+</node>
+<node id="DICKY SPECK">
+  <data key="d0">DICKY SPECK</data>
+</node>
+<node id="TEXAS">
+  <data key="d0">TEXAS</data>
+</node>
+<node id="MARSHALL">
+  <data key="d0">MARSHALL</data>
+</node>
+<node id="MARSHALL TATUM">
+  <data key="d0">MARSHALL TATUM</data>
+</node>
+<node id="KNEELING DJANGO">
+  <data key="d0">KNEELING DJANGO</data>
+</node>
+<node id="SPYGLASS POV">
+  <data key="d0">SPYGLASS POV</data>
+</node>
+<node id="BENNETT">
+  <data key="d0">BENNETT</data>
+</node>
+<node id="BIG JOHN">
+  <data key="d0">BIG JOHN</data>
+</node>
+<node id="BRADSHAW">
+  <data key="d0">BRADSHAW</data>
+</node>
+<node id="DOUG">
+  <data key="d0">DOUG</data>
+</node>
+<node id="RANDY">
+  <data key="d0">RANDY</data>
+</node>
+<node id="REDFISH">
+  <data key="d0">REDFISH</data>
+</node>
+<node id="ROBERT">
+  <data key="d0">ROBERT</data>
+</node>
+<node id="TERRY">
+  <data key="d0">TERRY</data>
+</node>
+<node id="WILLARD">
+  <data key="d0">WILLARD</data>
+</node>
+<node id="TWO SHOT">
+  <data key="d0">TWO SHOT</data>
+</node>
+<node id="WE SEE">
+  <data key="d0">WE SEE</data>
+</node>
+<node id="MISSISSIPPI">
+  <data key="d0">MISSISSIPPI</data>
+</node>
+<node id="BELOW">
+  <data key="d0">BELOW</data>
+</node>
+<node id="GREENVILLE">
+  <data key="d0">GREENVILLE</data>
+</node>
+<node id="I F">
+  <data key="d0">I F</data>
+</node>
+<node id="JUDD">
+  <data key="d0">JUDD</data>
+</node>
+<node id="RUSS">
+  <data key="d0">RUSS</data>
+</node>
+<node id="UGLIER MAN">
+  <data key="d0">UGLIER MAN</data>
+</node>
+<node id="UGLY MAN">
+  <data key="d0">UGLY MAN</data>
+</node>
+<node id="CANDIE">
+  <data key="d0">CANDIE</data>
+</node>
+<node id="PLAYER">
+  <data key="d0">PLAYER</data>
+</node>
+<node id="CLEO">
+  <data key="d0">CLEO</data>
+</node>
+<node id="FRENCH MAID">
+  <data key="d0">FRENCH MAID</data>
+</node>
+<node id="HOSTESS">
+  <data key="d0">HOSTESS</data>
+</node>
+<node id="REFINED">
+  <data key="d0">REFINED</data>
+</node>
+<node id="COCO CHIRPS">
+  <data key="d0">COCO CHIRPS</data>
+</node>
+<node id="SAY">
+  <data key="d0">SAY</data>
+</node>
+<node id="AMERIGO">
+  <data key="d0">AMERIGO</data>
+</node>
+<node id="BARTENDER">
+  <data key="d0">BARTENDER</data>
+</node>
+<node id="BARTHOLOMEW">
+  <data key="d0">BARTHOLOMEW</data>
+</node>
+<node id="COCO">
+  <data key="d0">COCO</data>
+</node>
+<node id="SHEBA">
+  <data key="d0">SHEBA</data>
+</node>
+<node id="WE CUT">
+  <data key="d0">WE CUT</data>
+</node>
+<node id="BILLY CRASH">
+  <data key="d0">BILLY CRASH</data>
+</node>
+<node id="PTE">
+  <data key="d0">PTE</data>
+</node>
+<node id="TWO MEN">
+  <data key="d0">TWO MEN</data>
+</node>
+<node id="O V">
+  <data key="d0">O V</data>
+</node>
+<node id="TRACKERS">
+  <data key="d0">TRACKERS</data>
+</node>
+<node id="AND DJANGO">
+  <data key="d0">AND DJANGO</data>
+</node>
+<node id="BIG FRED">
+  <data key="d0">BIG FRED</data>
+</node>
+<node id="FRED">
+  <data key="d0">FRED</data>
+</node>
+<node id="SIDNEY JAMES">
+  <data key="d0">SIDNEY JAMES</data>
+</node>
+<node id="DOG">
+  <data key="d0">DOG</data>
+</node>
+<node id="BROOMBILDA">
+  <data key="d0">BROOMBILDA</data>
+</node>
+<node id="SEEING HIM">
+  <data key="d0">SEEING HIM</data>
+</node>
+<node id="CANDLE">
+  <data key="d0">CANDLE</data>
+</node>
+<node id="DJANGO SCREAMS">
+  <data key="d0">DJANGO SCREAMS</data>
+</node>
+<node id="IJS">
+  <data key="d0">IJS</data>
+</node>
+<node id="CORA">
+  <data key="d0">CORA</data>
+</node>
+<node id="MARSHA">
+  <data key="d0">MARSHA</data>
+</node>
+<node id="SHIRTLESS DJANGO">
+  <data key="d0">SHIRTLESS DJANGO</data>
+</node>
+<node id="CU BROOMHILDA">
+  <data key="d0">CU BROOMHILDA</data>
+</node>
+<node id="BROWN">
+  <data key="d0">BROWN</data>
+</node>
+<node id="BROWN CODY">
+  <data key="d0">BROWN CODY</data>
+</node>
+<node id="ICZ">
+  <data key="d0">ICZ</data>
+</node>
+<node id="STEPHEN MOGUY">
+  <data key="d0">STEPHEN MOGUY</data>
+</node>
+<edge source="DJANGO" target="MOGUY">
+  <data key="d1">5</data>
+</edge>
+<edge source="DJANGO" target="CALVIN CANDIE">
+  <data key="d1">5</data>
+</edge>
+<edge source="DJANGO" target="STEPHEN">
+  <data key="d1">5</data>
+</edge>
+<edge source="DJANGO" target="ACE WOODY">
+  <data key="d1">4</data>
+</edge>
+<edge source="DJANGO" target="LARA LEE">
+  <data key="d1">4</data>
+</edge>
+<edge source="DJANGO" target="TIMMY">
+  <data key="d1">4</data>
+</edge>
+<edge source="DJANGO" target="BROOMHILDA">
+  <data key="d1">4</data>
+</edge>
+<edge source="DJANGO" target="SPENCER">
+  <data key="d1">3</data>
+</edge>
+<edge source="DJANGO" target="RODNEY">
+  <data key="d1">3</data>
+</edge>
+<edge source="DJANGO" target="ROY">
+  <data key="d1">3</data>
+</edge>
+<edge source="DJANGO" target="BETINA">
+  <data key="d1">2</data>
+</edge>
+<edge source="DJANGO" target="LITTLE RAJ">
+  <data key="d1">2</data>
+</edge>
+<edge source="DJANGO" target="SCHULTZ">
+  <data key="d1">2</data>
+</edge>
+<edge source="DJANGO" target="CALVIN CANDLE">
+  <data key="d1">2</data>
+</edge>
+<edge source="DJANGO" target="CHESTER">
+  <data key="d1">2</data>
+</edge>
+<edge source="DJANGO" target="CHICKEN CHARLY">
+  <data key="d1">2</data>
+</edge>
+<edge source="DJANGO" target="FLOYD">
+  <data key="d1">2</data>
+</edge>
+<edge source="DJANGO" target="JANO">
+  <data key="d1">2</data>
+</edge>
+<edge source="DJANGO" target="ACE SPEC">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="ACE SPECK">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="DICKY SPECK">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="TEXAS">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="MARSHALL">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="MARSHALL TATUM">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="KNEELING DJANGO">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="SPYGLASS POV">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="BENNETT">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="BIG JOHN">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="SPENCER BENNETT">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="TWO SHOT">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="WE SEE">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="MISSISSIPPI">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="BELOW">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="GREENVILLE">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="I F">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="JUDD">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="RUSS">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="COCO CHIRPS">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="SAY">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="AMERIGO">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="BARTENDER">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="BARTHOLOMEW">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="COCO">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="SHEBA">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="WE CUT">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="BILLY CRASH">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="PTE">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="TWO MEN">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="O V">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="TRACKERS">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="AND DJANGO">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="BIG FRED">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="FRED">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="SIDNEY JAMES">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="DJANGO SCREAMS">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="IJS">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="CORA">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="BROWN">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="BROWN CODY">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="ICZ">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO" target="STEPHEN MOGUY">
+  <data key="d1">1</data>
+</edge>
+<edge source="MOGUY" target="CALVIN CANDIE">
+  <data key="d1">4</data>
+</edge>
+<edge source="MOGUY" target="LARA LEE">
+  <data key="d1">2</data>
+</edge>
+<edge source="MOGUY" target="STEPHEN">
+  <data key="d1">2</data>
+</edge>
+<edge source="MOGUY" target="COCO CHIRPS">
+  <data key="d1">1</data>
+</edge>
+<edge source="MOGUY" target="SAY">
+  <data key="d1">1</data>
+</edge>
+<edge source="MOGUY" target="AMERIGO">
+  <data key="d1">1</data>
+</edge>
+<edge source="MOGUY" target="BARTENDER">
+  <data key="d1">1</data>
+</edge>
+<edge source="MOGUY" target="BARTHOLOMEW">
+  <data key="d1">1</data>
+</edge>
+<edge source="MOGUY" target="COCO">
+  <data key="d1">1</data>
+</edge>
+<edge source="MOGUY" target="SCHULTZ">
+  <data key="d1">1</data>
+</edge>
+<edge source="MOGUY" target="SHEBA">
+  <data key="d1">1</data>
+</edge>
+<edge source="MOGUY" target="WE CUT">
+  <data key="d1">1</data>
+</edge>
+<edge source="MOGUY" target="O V">
+  <data key="d1">1</data>
+</edge>
+<edge source="MOGUY" target="TRACKERS">
+  <data key="d1">1</data>
+</edge>
+<edge source="MOGUY" target="ACE WOODY">
+  <data key="d1">1</data>
+</edge>
+<edge source="MOGUY" target="AND DJANGO">
+  <data key="d1">1</data>
+</edge>
+<edge source="MOGUY" target="BIG FRED">
+  <data key="d1">1</data>
+</edge>
+<edge source="MOGUY" target="CALVIN CANDLE">
+  <data key="d1">1</data>
+</edge>
+<edge source="MOGUY" target="FRED">
+  <data key="d1">1</data>
+</edge>
+<edge source="MOGUY" target="SIDNEY JAMES">
+  <data key="d1">1</data>
+</edge>
+<edge source="MOGUY" target="TIMMY">
+  <data key="d1">1</data>
+</edge>
+<edge source="MOGUY" target="BROOMHILDA">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="CALVIN CANDLE">
+  <data key="d1">5</data>
+</edge>
+<edge source="CALVIN CANDIE" target="STEPHEN">
+  <data key="d1">4</data>
+</edge>
+<edge source="CALVIN CANDIE" target="LARA LEE">
+  <data key="d1">3</data>
+</edge>
+<edge source="CALVIN CANDIE" target="NARRATOR">
+  <data key="d1">2</data>
+</edge>
+<edge source="CALVIN CANDIE" target="CANDIE">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="PLAYER">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="SCOTTY">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="AMERIGO">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="BARTENDER">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="BARTHOLOMEW">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="COCO">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="SCHULTZ">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="SHEBA">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="WE CUT">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="BILLY CRASH">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="PTE">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="RODNEY">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="TWO MEN">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="O V">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="TRACKERS">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="ACE WOODY">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="AND DJANGO">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="BIG FRED">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="FRED">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="SIDNEY JAMES">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="TIMMY">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="BROOMHILDA">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="SEEING HIM">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDIE" target="CANDLE">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDLE" target="STEPHEN">
+  <data key="d1">3</data>
+</edge>
+<edge source="CALVIN CANDLE" target="LARA LEE">
+  <data key="d1">2</data>
+</edge>
+<edge source="CALVIN CANDLE" target="BILLY CRASH">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDLE" target="PTE">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDLE" target="RODNEY">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDLE" target="TWO MEN">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDLE" target="ACE WOODY">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDLE" target="AND DJANGO">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDLE" target="BIG FRED">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDLE" target="FRED">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDLE" target="SIDNEY JAMES">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDLE" target="TIMMY">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDLE" target="SEEING HIM">
+  <data key="d1">1</data>
+</edge>
+<edge source="CALVIN CANDLE" target="CANDLE">
+  <data key="d1">1</data>
+</edge>
+<edge source="STEPHEN" target="LARA LEE">
+  <data key="d1">3</data>
+</edge>
+<edge source="STEPHEN" target="BROOMHILDA">
+  <data key="d1">3</data>
+</edge>
+<edge source="STEPHEN" target="ACE WOODY">
+  <data key="d1">2</data>
+</edge>
+<edge source="STEPHEN" target="TIMMY">
+  <data key="d1">2</data>
+</edge>
+<edge source="STEPHEN" target="AND DJANGO">
+  <data key="d1">1</data>
+</edge>
+<edge source="STEPHEN" target="BIG FRED">
+  <data key="d1">1</data>
+</edge>
+<edge source="STEPHEN" target="FRED">
+  <data key="d1">1</data>
+</edge>
+<edge source="STEPHEN" target="SIDNEY JAMES">
+  <data key="d1">1</data>
+</edge>
+<edge source="STEPHEN" target="BROOMBILDA">
+  <data key="d1">1</data>
+</edge>
+<edge source="STEPHEN" target="SEEING HIM">
+  <data key="d1">1</data>
+</edge>
+<edge source="STEPHEN" target="DJANGO SCREAMS">
+  <data key="d1">1</data>
+</edge>
+<edge source="STEPHEN" target="IJS">
+  <data key="d1">1</data>
+</edge>
+<edge source="ACE WOODY" target="LARA LEE">
+  <data key="d1">2</data>
+</edge>
+<edge source="ACE WOODY" target="TIMMY">
+  <data key="d1">2</data>
+</edge>
+<edge source="ACE WOODY" target="AND DJANGO">
+  <data key="d1">1</data>
+</edge>
+<edge source="ACE WOODY" target="BIG FRED">
+  <data key="d1">1</data>
+</edge>
+<edge source="ACE WOODY" target="FRED">
+  <data key="d1">1</data>
+</edge>
+<edge source="ACE WOODY" target="SIDNEY JAMES">
+  <data key="d1">1</data>
+</edge>
+<edge source="ACE WOODY" target="DJANGO SCREAMS">
+  <data key="d1">1</data>
+</edge>
+<edge source="ACE WOODY" target="IJS">
+  <data key="d1">1</data>
+</edge>
+<edge source="ACE WOODY" target="CHESTER">
+  <data key="d1">1</data>
+</edge>
+<edge source="ACE WOODY" target="CHICKEN CHARLY">
+  <data key="d1">1</data>
+</edge>
+<edge source="ACE WOODY" target="FLOYD">
+  <data key="d1">1</data>
+</edge>
+<edge source="ACE WOODY" target="JANO">
+  <data key="d1">1</data>
+</edge>
+<edge source="ACE WOODY" target="RODNEY">
+  <data key="d1">1</data>
+</edge>
+<edge source="ACE WOODY" target="ROY">
+  <data key="d1">1</data>
+</edge>
+<edge source="ACE WOODY" target="BROOMHILDA">
+  <data key="d1">1</data>
+</edge>
+<edge source="ACE WOODY" target="BROWN">
+  <data key="d1">1</data>
+</edge>
+<edge source="ACE WOODY" target="BROWN CODY">
+  <data key="d1">1</data>
+</edge>
+<edge source="ACE WOODY" target="ICZ">
+  <data key="d1">1</data>
+</edge>
+<edge source="ACE WOODY" target="STEPHEN MOGUY">
+  <data key="d1">1</data>
+</edge>
+<edge source="LARA LEE" target="BROOMHILDA">
+  <data key="d1">3</data>
+</edge>
+<edge source="LARA LEE" target="AND DJANGO">
+  <data key="d1">1</data>
+</edge>
+<edge source="LARA LEE" target="BIG FRED">
+  <data key="d1">1</data>
+</edge>
+<edge source="LARA LEE" target="FRED">
+  <data key="d1">1</data>
+</edge>
+<edge source="LARA LEE" target="SIDNEY JAMES">
+  <data key="d1">1</data>
+</edge>
+<edge source="LARA LEE" target="TIMMY">
+  <data key="d1">1</data>
+</edge>
+<edge source="LARA LEE" target="DOG">
+  <data key="d1">1</data>
+</edge>
+<edge source="LARA LEE" target="SEEING HIM">
+  <data key="d1">1</data>
+</edge>
+<edge source="LARA LEE" target="CHESTER">
+  <data key="d1">1</data>
+</edge>
+<edge source="LARA LEE" target="CHICKEN CHARLY">
+  <data key="d1">1</data>
+</edge>
+<edge source="LARA LEE" target="CORA">
+  <data key="d1">1</data>
+</edge>
+<edge source="LARA LEE" target="FLOYD">
+  <data key="d1">1</data>
+</edge>
+<edge source="LARA LEE" target="RODNEY">
+  <data key="d1">1</data>
+</edge>
+<edge source="LARA LEE" target="ROY">
+  <data key="d1">1</data>
+</edge>
+<edge source="LARA LEE" target="BROWN">
+  <data key="d1">1</data>
+</edge>
+<edge source="LARA LEE" target="BROWN CODY">
+  <data key="d1">1</data>
+</edge>
+<edge source="LARA LEE" target="ICZ">
+  <data key="d1">1</data>
+</edge>
+<edge source="LARA LEE" target="STEPHEN MOGUY">
+  <data key="d1">1</data>
+</edge>
+<edge source="TIMMY" target="AND DJANGO">
+  <data key="d1">1</data>
+</edge>
+<edge source="TIMMY" target="BIG FRED">
+  <data key="d1">1</data>
+</edge>
+<edge source="TIMMY" target="FRED">
+  <data key="d1">1</data>
+</edge>
+<edge source="TIMMY" target="SIDNEY JAMES">
+  <data key="d1">1</data>
+</edge>
+<edge source="TIMMY" target="DJANGO SCREAMS">
+  <data key="d1">1</data>
+</edge>
+<edge source="TIMMY" target="IJS">
+  <data key="d1">1</data>
+</edge>
+<edge source="BROOMHILDA" target="NARRATOR">
+  <data key="d1">2</data>
+</edge>
+<edge source="BROOMHILDA" target="SCOTTY">
+  <data key="d1">1</data>
+</edge>
+<edge source="BROOMHILDA" target="UGLIER MAN">
+  <data key="d1">1</data>
+</edge>
+<edge source="BROOMHILDA" target="UGLY MAN">
+  <data key="d1">1</data>
+</edge>
+<edge source="BROOMHILDA" target="DOG">
+  <data key="d1">1</data>
+</edge>
+<edge source="BROOMHILDA" target="BROOMBILDA">
+  <data key="d1">1</data>
+</edge>
+<edge source="BROOMHILDA" target="BILLY CRASH">
+  <data key="d1">1</data>
+</edge>
+<edge source="BROOMHILDA" target="CU BROOMHILDA">
+  <data key="d1">1</data>
+</edge>
+<edge source="BROOMHILDA" target="BROWN">
+  <data key="d1">1</data>
+</edge>
+<edge source="BROOMHILDA" target="BROWN CODY">
+  <data key="d1">1</data>
+</edge>
+<edge source="BROOMHILDA" target="ICZ">
+  <data key="d1">1</data>
+</edge>
+<edge source="BROOMHILDA" target="STEPHEN MOGUY">
+  <data key="d1">1</data>
+</edge>
+<edge source="SPENCER" target="SPENCER BENNETT">
+  <data key="d1">3</data>
+</edge>
+<edge source="SPENCER" target="BETINA">
+  <data key="d1">2</data>
+</edge>
+<edge source="SPENCER" target="LITTLE RAJ">
+  <data key="d1">2</data>
+</edge>
+<edge source="SPENCER" target="KNEELING DJANGO">
+  <data key="d1">1</data>
+</edge>
+<edge source="SPENCER" target="SPYGLASS POV">
+  <data key="d1">1</data>
+</edge>
+<edge source="SPENCER" target="BENNETT">
+  <data key="d1">1</data>
+</edge>
+<edge source="SPENCER" target="BIG JOHN">
+  <data key="d1">1</data>
+</edge>
+<edge source="SPENCER" target="SCHULTZ">
+  <data key="d1">1</data>
+</edge>
+<edge source="SPENCER" target="BRADSHAW">
+  <data key="d1">1</data>
+</edge>
+<edge source="SPENCER" target="DOUG">
+  <data key="d1">1</data>
+</edge>
+<edge source="SPENCER" target="RANDY">
+  <data key="d1">1</data>
+</edge>
+<edge source="SPENCER" target="REDFISH">
+  <data key="d1">1</data>
+</edge>
+<edge source="SPENCER" target="ROBERT">
+  <data key="d1">1</data>
+</edge>
+<edge source="SPENCER" target="TERRY">
+  <data key="d1">1</data>
+</edge>
+<edge source="SPENCER" target="WILLARD">
+  <data key="d1">1</data>
+</edge>
+<edge source="SPENCER" target="TWO SHOT">
+  <data key="d1">1</data>
+</edge>
+<edge source="SPENCER BENNETT" target="BETINA">
+  <data key="d1">1</data>
+</edge>
+<edge source="SPENCER BENNETT" target="BRADSHAW">
+  <data key="d1">1</data>
+</edge>
+<edge source="SPENCER BENNETT" target="DOUG">
+  <data key="d1">1</data>
+</edge>
+<edge source="SPENCER BENNETT" target="RANDY">
+  <data key="d1">1</data>
+</edge>
+<edge source="SPENCER BENNETT" target="REDFISH">
+  <data key="d1">1</data>
+</edge>
+<edge source="SPENCER BENNETT" target="ROBERT">
+  <data key="d1">1</data>
+</edge>
+<edge source="SPENCER BENNETT" target="TERRY">
+  <data key="d1">1</data>
+</edge>
+<edge source="SPENCER BENNETT" target="WILLARD">
+  <data key="d1">1</data>
+</edge>
+<edge source="SPENCER BENNETT" target="TWO SHOT">
+  <data key="d1">1</data>
+</edge>
+<edge source="RODNEY" target="CHESTER">
+  <data key="d1">2</data>
+</edge>
+<edge source="RODNEY" target="CHICKEN CHARLY">
+  <data key="d1">2</data>
+</edge>
+<edge source="RODNEY" target="FLOYD">
+  <data key="d1">2</data>
+</edge>
+<edge source="RODNEY" target="ROY">
+  <data key="d1">2</data>
+</edge>
+<edge source="RODNEY" target="BILLY CRASH">
+  <data key="d1">1</data>
+</edge>
+<edge source="RODNEY" target="PTE">
+  <data key="d1">1</data>
+</edge>
+<edge source="RODNEY" target="TWO MEN">
+  <data key="d1">1</data>
+</edge>
+<edge source="RODNEY" target="JANO">
+  <data key="d1">1</data>
+</edge>
+<edge source="RODNEY" target="CORA">
+  <data key="d1">1</data>
+</edge>
+<edge source="ROY" target="CHESTER">
+  <data key="d1">2</data>
+</edge>
+<edge source="ROY" target="CHICKEN CHARLY">
+  <data key="d1">2</data>
+</edge>
+<edge source="ROY" target="FLOYD">
+  <data key="d1">2</data>
+</edge>
+<edge source="ROY" target="JANO">
+  <data key="d1">2</data>
+</edge>
+<edge source="ROY" target="CORA">
+  <data key="d1">1</data>
+</edge>
+<edge source="BETINA" target="KNEELING DJANGO">
+  <data key="d1">1</data>
+</edge>
+<edge source="BETINA" target="LITTLE RAJ">
+  <data key="d1">1</data>
+</edge>
+<edge source="BETINA" target="SPYGLASS POV">
+  <data key="d1">1</data>
+</edge>
+<edge source="LITTLE RAJ" target="KNEELING DJANGO">
+  <data key="d1">1</data>
+</edge>
+<edge source="LITTLE RAJ" target="SPYGLASS POV">
+  <data key="d1">1</data>
+</edge>
+<edge source="LITTLE RAJ" target="BENNETT">
+  <data key="d1">1</data>
+</edge>
+<edge source="LITTLE RAJ" target="BIG JOHN">
+  <data key="d1">1</data>
+</edge>
+<edge source="LITTLE RAJ" target="SCHULTZ">
+  <data key="d1">1</data>
+</edge>
+<edge source="SCHULTZ" target="BENNETT">
+  <data key="d1">1</data>
+</edge>
+<edge source="SCHULTZ" target="BIG JOHN">
+  <data key="d1">1</data>
+</edge>
+<edge source="SCHULTZ" target="AMERIGO">
+  <data key="d1">1</data>
+</edge>
+<edge source="SCHULTZ" target="BARTENDER">
+  <data key="d1">1</data>
+</edge>
+<edge source="SCHULTZ" target="BARTHOLOMEW">
+  <data key="d1">1</data>
+</edge>
+<edge source="SCHULTZ" target="COCO">
+  <data key="d1">1</data>
+</edge>
+<edge source="SCHULTZ" target="SHEBA">
+  <data key="d1">1</data>
+</edge>
+<edge source="SCHULTZ" target="WE CUT">
+  <data key="d1">1</data>
+</edge>
+<edge source="NARRATOR" target="SCOTTY">
+  <data key="d1">2</data>
+</edge>
+<edge source="NARRATOR" target="UGLIER MAN">
+  <data key="d1">1</data>
+</edge>
+<edge source="NARRATOR" target="UGLY MAN">
+  <data key="d1">1</data>
+</edge>
+<edge source="NARRATOR" target="CANDIE">
+  <data key="d1">1</data>
+</edge>
+<edge source="NARRATOR" target="PLAYER">
+  <data key="d1">1</data>
+</edge>
+<edge source="SCOTTY" target="UGLIER MAN">
+  <data key="d1">1</data>
+</edge>
+<edge source="SCOTTY" target="UGLY MAN">
+  <data key="d1">1</data>
+</edge>
+<edge source="SCOTTY" target="CANDIE">
+  <data key="d1">1</data>
+</edge>
+<edge source="SCOTTY" target="PLAYER">
+  <data key="d1">1</data>
+</edge>
+<edge source="CHESTER" target="CHICKEN CHARLY">
+  <data key="d1">2</data>
+</edge>
+<edge source="CHESTER" target="FLOYD">
+  <data key="d1">2</data>
+</edge>
+<edge source="CHESTER" target="JANO">
+  <data key="d1">1</data>
+</edge>
+<edge source="CHESTER" target="CORA">
+  <data key="d1">1</data>
+</edge>
+<edge source="CHICKEN CHARLY" target="FLOYD">
+  <data key="d1">2</data>
+</edge>
+<edge source="CHICKEN CHARLY" target="JANO">
+  <data key="d1">1</data>
+</edge>
+<edge source="CHICKEN CHARLY" target="CORA">
+  <data key="d1">1</data>
+</edge>
+<edge source="FLOYD" target="JANO">
+  <data key="d1">1</data>
+</edge>
+<edge source="FLOYD" target="CORA">
+  <data key="d1">1</data>
+</edge>
+<edge source="ACE SPEC" target="ACE SPECK">
+  <data key="d1">1</data>
+</edge>
+<edge source="ACE SPEC" target="DICKY SPECK">
+  <data key="d1">1</data>
+</edge>
+<edge source="ACE SPECK" target="DICKY SPECK">
+  <data key="d1">1</data>
+</edge>
+<edge source="MARSHALL" target="MARSHALL TATUM">
+  <data key="d1">1</data>
+</edge>
+<edge source="KNEELING DJANGO" target="SPYGLASS POV">
+  <data key="d1">1</data>
+</edge>
+<edge source="BENNETT" target="BIG JOHN">
+  <data key="d1">1</data>
+</edge>
+<edge source="BRADSHAW" target="DOUG">
+  <data key="d1">1</data>
+</edge>
+<edge source="BRADSHAW" target="RANDY">
+  <data key="d1">1</data>
+</edge>
+<edge source="BRADSHAW" target="REDFISH">
+  <data key="d1">1</data>
+</edge>
+<edge source="BRADSHAW" target="ROBERT">
+  <data key="d1">1</data>
+</edge>
+<edge source="BRADSHAW" target="TERRY">
+  <data key="d1">1</data>
+</edge>
+<edge source="BRADSHAW" target="WILLARD">
+  <data key="d1">1</data>
+</edge>
+<edge source="DOUG" target="RANDY">
+  <data key="d1">1</data>
+</edge>
+<edge source="DOUG" target="REDFISH">
+  <data key="d1">1</data>
+</edge>
+<edge source="DOUG" target="ROBERT">
+  <data key="d1">1</data>
+</edge>
+<edge source="DOUG" target="TERRY">
+  <data key="d1">1</data>
+</edge>
+<edge source="DOUG" target="WILLARD">
+  <data key="d1">1</data>
+</edge>
+<edge source="RANDY" target="REDFISH">
+  <data key="d1">1</data>
+</edge>
+<edge source="RANDY" target="ROBERT">
+  <data key="d1">1</data>
+</edge>
+<edge source="RANDY" target="TERRY">
+  <data key="d1">1</data>
+</edge>
+<edge source="RANDY" target="WILLARD">
+  <data key="d1">1</data>
+</edge>
+<edge source="REDFISH" target="ROBERT">
+  <data key="d1">1</data>
+</edge>
+<edge source="REDFISH" target="TERRY">
+  <data key="d1">1</data>
+</edge>
+<edge source="REDFISH" target="WILLARD">
+  <data key="d1">1</data>
+</edge>
+<edge source="ROBERT" target="TERRY">
+  <data key="d1">1</data>
+</edge>
+<edge source="ROBERT" target="WILLARD">
+  <data key="d1">1</data>
+</edge>
+<edge source="TERRY" target="WILLARD">
+  <data key="d1">1</data>
+</edge>
+<edge source="BELOW" target="GREENVILLE">
+  <data key="d1">1</data>
+</edge>
+<edge source="BELOW" target="I F">
+  <data key="d1">1</data>
+</edge>
+<edge source="BELOW" target="JUDD">
+  <data key="d1">1</data>
+</edge>
+<edge source="BELOW" target="RUSS">
+  <data key="d1">1</data>
+</edge>
+<edge source="GREENVILLE" target="I F">
+  <data key="d1">1</data>
+</edge>
+<edge source="GREENVILLE" target="JUDD">
+  <data key="d1">1</data>
+</edge>
+<edge source="GREENVILLE" target="RUSS">
+  <data key="d1">1</data>
+</edge>
+<edge source="I F" target="JUDD">
+  <data key="d1">1</data>
+</edge>
+<edge source="I F" target="RUSS">
+  <data key="d1">1</data>
+</edge>
+<edge source="JUDD" target="RUSS">
+  <data key="d1">1</data>
+</edge>
+<edge source="UGLIER MAN" target="UGLY MAN">
+  <data key="d1">1</data>
+</edge>
+<edge source="CANDIE" target="PLAYER">
+  <data key="d1">1</data>
+</edge>
+<edge source="CLEO" target="FRENCH MAID">
+  <data key="d1">1</data>
+</edge>
+<edge source="CLEO" target="HOSTESS">
+  <data key="d1">1</data>
+</edge>
+<edge source="CLEO" target="REFINED">
+  <data key="d1">1</data>
+</edge>
+<edge source="FRENCH MAID" target="HOSTESS">
+  <data key="d1">1</data>
+</edge>
+<edge source="FRENCH MAID" target="REFINED">
+  <data key="d1">1</data>
+</edge>
+<edge source="HOSTESS" target="REFINED">
+  <data key="d1">1</data>
+</edge>
+<edge source="COCO CHIRPS" target="SAY">
+  <data key="d1">1</data>
+</edge>
+<edge source="AMERIGO" target="BARTENDER">
+  <data key="d1">1</data>
+</edge>
+<edge source="AMERIGO" target="BARTHOLOMEW">
+  <data key="d1">1</data>
+</edge>
+<edge source="AMERIGO" target="COCO">
+  <data key="d1">1</data>
+</edge>
+<edge source="AMERIGO" target="SHEBA">
+  <data key="d1">1</data>
+</edge>
+<edge source="AMERIGO" target="WE CUT">
+  <data key="d1">1</data>
+</edge>
+<edge source="BARTENDER" target="BARTHOLOMEW">
+  <data key="d1">1</data>
+</edge>
+<edge source="BARTENDER" target="COCO">
+  <data key="d1">1</data>
+</edge>
+<edge source="BARTENDER" target="SHEBA">
+  <data key="d1">1</data>
+</edge>
+<edge source="BARTENDER" target="WE CUT">
+  <data key="d1">1</data>
+</edge>
+<edge source="BARTHOLOMEW" target="COCO">
+  <data key="d1">1</data>
+</edge>
+<edge source="BARTHOLOMEW" target="SHEBA">
+  <data key="d1">1</data>
+</edge>
+<edge source="BARTHOLOMEW" target="WE CUT">
+  <data key="d1">1</data>
+</edge>
+<edge source="COCO" target="SHEBA">
+  <data key="d1">1</data>
+</edge>
+<edge source="COCO" target="WE CUT">
+  <data key="d1">1</data>
+</edge>
+<edge source="SHEBA" target="WE CUT">
+  <data key="d1">1</data>
+</edge>
+<edge source="BILLY CRASH" target="PTE">
+  <data key="d1">1</data>
+</edge>
+<edge source="BILLY CRASH" target="TWO MEN">
+  <data key="d1">1</data>
+</edge>
+<edge source="BILLY CRASH" target="CU BROOMHILDA">
+  <data key="d1">1</data>
+</edge>
+<edge source="PTE" target="TWO MEN">
+  <data key="d1">1</data>
+</edge>
+<edge source="O V" target="TRACKERS">
+  <data key="d1">1</data>
+</edge>
+<edge source="AND DJANGO" target="BIG FRED">
+  <data key="d1">1</data>
+</edge>
+<edge source="AND DJANGO" target="FRED">
+  <data key="d1">1</data>
+</edge>
+<edge source="AND DJANGO" target="SIDNEY JAMES">
+  <data key="d1">1</data>
+</edge>
+<edge source="BIG FRED" target="FRED">
+  <data key="d1">1</data>
+</edge>
+<edge source="BIG FRED" target="SIDNEY JAMES">
+  <data key="d1">1</data>
+</edge>
+<edge source="FRED" target="SIDNEY JAMES">
+  <data key="d1">1</data>
+</edge>
+<edge source="DJANGO SCREAMS" target="IJS">
+  <data key="d1">1</data>
+</edge>
+<edge source="MARSHA" target="SHIRTLESS DJANGO">
+  <data key="d1">1</data>
+</edge>
+<edge source="BROWN" target="BROWN CODY">
+  <data key="d1">1</data>
+</edge>
+<edge source="BROWN" target="ICZ">
+  <data key="d1">1</data>
+</edge>
+<edge source="BROWN" target="STEPHEN MOGUY">
+  <data key="d1">1</data>
+</edge>
+<edge source="BROWN CODY" target="ICZ">
+  <data key="d1">1</data>
+</edge>
+<edge source="BROWN CODY" target="STEPHEN MOGUY">
+  <data key="d1">1</data>
+</edge>
+<edge source="ICZ" target="STEPHEN MOGUY">
+  <data key="d1">1</data>
+</edge>
+</graph></graphml>

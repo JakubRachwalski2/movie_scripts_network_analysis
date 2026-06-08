@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Django Unchained — Analiza Sieci Postaci</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rye&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0704;
+    --bg2: #110e08;
+    --panel: #16100a;
+    --panel-border: #3a2c1a;
+    --gold: #c9922a;
+    --gold-light: #e8b85a;
+    --blood: #8b1a1a;
+    --blood-bright: #c0392b;
+    --dust: #b89a6a;
+    --dust-light: #d4b88a;
+    --sand: #e8dcc8;
+    --sky: #3a6a8a;
+    --text: #e8dcc8;
+    --text-dim: #8a7a62;
+    --accent: #c9922a;
+    --font-display: 'Rye', serif;
+    --font-body: 'Special Elite', cursive;
+    --c0: #c9922a;
+    --c1: #8b1a1a;
+    --c2: #3a6a8a;
+    --c3: #5a8a3a;
+    --c4: #7a3a8a;
+    --c5: #8a6a2a;
+    --c6: #2a6a5a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(139,26,26,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(201,146,42,0.06) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+
+  header {
+    text-align: center;
+    padding: 28px 20px 18px;
+    border-bottom: 1px solid var(--panel-border);
+    position: relative;
+    background: linear-gradient(180deg, rgba(139,26,26,0.15) 0%, transparent 100%);
+  }
+  header::before {
+    content: '★  ★  ★';
+    display: block;
+    color: var(--gold);
+    font-size: 10px;
+    letter-spacing: 8px;
+    margin-bottom: 8px;
+    opacity: 0.6;
+  }
+  header h1 {
+    font-family: var(--font-display);
+    font-size: clamp(22px, 4vw, 42px);
+    color: var(--gold-light);
+    letter-spacing: 3px;
+    text-shadow: 0 0 30px rgba(201,146,42,0.4), 2px 2px 0 rgba(0,0,0,0.8);
+    line-height: 1.1;
+  }
+  header h1 span { color: var(--blood-bright); }
+  header p {
+    font-size: 11px;
+    color: var(--dust);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-top: 6px;
+    opacity: 0.7;
+  }
+  .divider {
+    width: 120px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 8px auto 0;
+  }
+
+  .main-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    height: calc(100vh - 110px);
+    gap: 0;
+  }
+
+  /* LEFT: Graph area */
+  .graph-area {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--panel-border);
+    overflow: hidden;
+  }
+  .controls {
+    display: flex;
+    gap: 6px;
+    padding: 10px 12px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--panel-border);
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .controls span {
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+  .ctrl-btn {
+    background: transparent;
+    border: 1px solid var(--panel-border);
+    color: var(--dust);
+    font-family: var(--font-body);
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+  .ctrl-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .ctrl-btn.active {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--bg);
+    font-weight: bold;
+  }
+  #graph-svg { flex: 1; width: 100%; }
+
+  /* RIGHT PANEL */
+  .right-panel {
+    display: flex;
+    flex-direction: column;
+    background: var(--panel);
+    overflow: hidden;
+  }
+
+  /* NODE CARD */
+  .node-card {
+    padding: 14px;
+    border-bottom: 1px solid var(--panel-border);
+    min-height: 200px;
+    background: linear-gradient(180deg, rgba(201,146,42,0.04) 0%, transparent 100%);
+  }
+  .node-card-empty {
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; height: 100%;
+  }
+  .node-card-empty p {
+    color: var(--text-dim); font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    line-height: 1.8;
+  }
+  .node-name {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--gold-light);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.8);
+  }
+  .community-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    color: var(--bg);
+    font-weight: bold;
+  }
+  .metric-row {
+    margin-bottom: 5px;
+  }
+  .metric-label {
+    display: flex; justify-content: space-between;
+    font-size: 9px; letter-spacing: 1px; color: var(--dust); margin-bottom: 2px;
+    text-transform: uppercase;
+  }
+  .metric-bar-bg {
+    height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px;
+  }
+  .metric-bar-fill {
+    height: 100%; border-radius: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    transition: width 0.4s ease;
+  }
+  .connections-title {
+    font-size: 9px; letter-spacing: 2px; color: var(--text-dim);
+    text-transform: uppercase; margin: 8px 0 4px;
+  }
+  .conn-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 2px 0; font-size: 10px; color: var(--dust);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .conn-weight {
+    font-size: 9px; color: var(--gold); font-weight: bold;
+  }
+
+  /* LEGEND */
+  .legend {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--panel-border);
+  }
+  .legend-title {
+    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--text-dim); margin-bottom: 8px;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 3px 6px; cursor: pointer; border-radius: 2px;
+    transition: background 0.15s;
+    margin-bottom: 2px;
+  }
+  .legend-item:hover { background: rgba(255,255,255,0.05); }
+  .legend-item.active { background: rgba(201,146,42,0.1); }
+  .legend-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .legend-label { font-size: 10px; color: var(--dust); letter-spacing: 0.5px; }
+  .legend-count { margin-left: auto; font-size: 9px; color: var(--text-dim); }
+
+  /* RANKING */
+  .ranking {
+    flex: 1; display: flex; flex-direction: column; overflow: hidden;
+  }
+  .rank-tabs {
+    display: flex; border-bottom: 1px solid var(--panel-border);
+    background: var(--bg2);
+  }
+  .rank-tab {
+    flex: 1; padding: 7px 4px; text-align: center;
+    font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text-dim); cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .rank-tab:hover { color: var(--dust); }
+  .rank-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .rank-list {
+    flex: 1; overflow-y: auto; padding: 6px 0;
+  }
+  .rank-list::-webkit-scrollbar { width: 4px; }
+  .rank-list::-webkit-scrollbar-track { background: transparent; }
+  .rank-list::-webkit-scrollbar-thumb { background: var(--panel-border); }
+  .rank-row {
+    display: flex; align-items: center; gap: 6px;
+    padding: 4px 10px; cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    transition: background 0.15s;
+  }
+  .rank-row:hover { background: rgba(201,146,42,0.08); }
+  .rank-num { font-size: 9px; color: var(--text-dim); width: 16px; text-align: right; flex-shrink: 0; }
+  .rank-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .rank-name { font-size: 10px; color: var(--dust); flex: 1; letter-spacing: 0.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rank-bar-wrap { width: 50px; height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; flex-shrink: 0; }
+  .rank-bar { height: 100%; border-radius: 2px; background: var(--gold); }
+  .rank-val { font-size: 9px; color: var(--gold); width: 36px; text-align: right; flex-shrink: 0; }
+
+  /* TOOLTIP */
+  #tooltip {
+    position: fixed; pointer-events: none;
+    background: var(--panel);
+    border: 1px solid var(--gold);
+    padding: 8px 12px;
+    font-family: var(--font-body);
+    font-size: 10px;
+    color: var(--text);
+    z-index: 9999;
+    display: none;
+    max-width: 200px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+  }
+  #tooltip .tt-name { font-family: var(--font-display); font-size: 13px; color: var(--gold-light); margin-bottom: 4px; }
+  #tooltip .tt-row { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 2px; }
+  #tooltip .tt-label { color: var(--text-dim); font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
+  #tooltip .tt-val { color: var(--dust); font-size: 9px; }
+
+  /* INTERPRETATION */
+  .interpretation {
+    padding: 40px clamp(20px, 5vw, 80px);
+    border-top: 1px solid var(--panel-border);
+    background: var(--bg2);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  }
+  .interpretation h2 {
+    font-family: var(--font-display);
+    font-size: clamp(18px, 3vw, 28px);
+    color: var(--gold);
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.8);
+  }
+  .interp-divider {
+    width: 80px; height: 1px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    margin-bottom: 24px;
+  }
+  .interp-section { margin-bottom: 32px; max-width: 900px; }
+  .interp-section h3 {
+    font-family: var(--font-display);
+    font-size: 14px;
+    color: var(--blood-bright);
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .interp-section p {
+    font-size: 13px; line-height: 1.8; color: var(--dust);
+    margin-bottom: 8px;
+  }
+  .interp-section strong { color: var(--gold-light); }
+  .interp-section em { color: var(--blood-bright); font-style: normal; }
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px; margin: 12px 0;
+  }
+  .stat-box {
+    background: rgba(201,146,42,0.06);
+    border: 1px solid var(--panel-border);
+    padding: 12px; text-align: center;
+  }
+  .stat-box .sv { font-family: var(--font-display); font-size: 22px; color: var(--gold); }
+  .stat-box .sl { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); margin-top: 2px; }
+  .bullet-list { list-style: none; padding: 0; }
+  .bullet-list li {
+    padding: 4px 0 4px 18px; font-size: 12px; color: var(--dust);
+    position: relative; line-height: 1.6;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .bullet-list li::before {
+    content: '✦'; position: absolute; left: 0;
+    color: var(--gold); font-size: 8px; top: 6px;
+  }
+
+  @media (max-width: 700px) {
+    .main-layout { grid-template-columns: 1fr; height: auto; }
+    .graph-area { height: 60vh; }
+    .right-panel { height: auto; }
+    .ranking { height: 300px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>DJANGO <span>UNCHAINED</span></h1>
+  <p>Analiza Sieci Postaci · Social Network Analysis</p>
+  <div class="divider"></div>
+</header>
+
+<div class="main-layout">
+  <div class="graph-area">
+    <div class="controls">
+      <span>Rozmiar węzłów:</span>
+      <button class="ctrl-btn active" data-mode="degree">Stopień</button>
+      <button class="ctrl-btn" data-mode="betweenness">Pośrednictwo</button>
+      <button class="ctrl-btn" data-mode="closeness">Bliskość</button>
+      <button class="ctrl-btn" data-mode="pagerank">PageRank</button>
+      <button class="ctrl-btn" data-mode="reset">↺ Reset</button>
+    </div>
+    <svg id="graph-svg"></svg>
+  </div>
+
+  <div class="right-panel">
+    <div class="node-card" id="node-card">
+      <div class="node-card-empty">
+        <p>Kliknij postać<br>aby zobaczyć<br>szczegóły</p>
+      </div>
+    </div>
+    <div class="legend" id="legend">
+      <div class="legend-title">Społeczności</div>
+      <div id="legend-items"></div>
+    </div>
+    <div class="ranking">
+      <div class="rank-tabs">
+        <div class="rank-tab active" data-rank="degree">Stopień</div>
+        <div class="rank-tab" data-rank="betweenness">Pośred.</div>
+        <div class="rank-tab" data-rank="closeness">Bliskość</div>
+        <div class="rank-tab" data-rank="pagerank">PageRank</div>
+      </div>
+      <div class="rank-list" id="rank-list"></div>
+    </div>
+  </div>
+</div>
+
+<div id="tooltip">
+  <div class="tt-name" id="tt-name"></div>
+  <div class="tt-row"><span class="tt-label">Stopień</span><span class="tt-val" id="tt-deg"></span></div>
+  <div class="tt-row"><span class="tt-label">Pośrednictwo</span><span class="tt-val" id="tt-bet"></span></div>
+  <div class="tt-row"><span class="tt-label">PageRank</span><span class="tt-val" id="tt-pr"></span></div>
+</div>
+
+<div class="interpretation">
+  <h2>Interpretacja Humanistyczna</h2>
+  <div class="interp-divider"></div>
+
+  <div class="interp-section">
+    <h3>I. Podstawowe Parametry Sieci</h3>
+    <div class="stat-grid" id="stat-grid"></div>
+    <p id="interp-basic"></p>
+  </div>
+
+  <div class="interp-section">
+    <h3>II. Analiza Centralności</h3>
+    <p id="interp-centrality"></p>
+  </div>
+
+  <div class="interp-section">
+    <h3>III. Struktura Społeczności i Podgrupy Narracyjne</h3>
+    <p id="interp-communities"></p>
+  </div>
+
+  <div class="interp-section">
+    <h3>IV. Anomalie i Odkrycia Strukturalne</h3>
+    <p id="interp-anomalies"></p>
+  </div>
+
+  <div class="interp-section">
+    <h3>V. Propozycje Dalszych Analiz</h3>
+    <ul class="bullet-list" id="interp-proposals"></ul>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const RAW_NODES = ["DJANGO","MOGUY","CALVIN CANDIE","CALVIN CANDLE","STEPHEN","ACE WOODY","LARA LEE","TIMMY","BROOMHILDA","SPENCER","SPENCER BENNETT","RODNEY","ROY","BETINA","LITTLE RAJ","SCHULTZ","NARRATOR","SCOTTY","CHESTER","CHICKEN CHARLY","FLOYD","JANO","ACE SPEC","ACE SPECK","DICKY SPECK","TEXAS","MARSHALL","MARSHALL TATUM","KNEELING DJANGO","SPYGLASS POV","BENNETT","BIG JOHN","BRADSHAW","DOUG","RANDY","REDFISH","ROBERT","TERRY","WILLARD","TWO SHOT","WE SEE","MISSISSIPPI","BELOW","GREENVILLE","I F","JUDD","RUSS","UGLIER MAN","UGLY MAN","CANDIE","PLAYER","CLEO","FRENCH MAID","HOSTESS","REFINED","COCO CHIRPS","SAY","AMERIGO","BARTENDER","BARTHOLOMEW","COCO","SHEBA","WE CUT","BILLY CRASH","PTE","TWO MEN","O V","TRACKERS","AND DJANGO","BIG FRED","FRED","SIDNEY JAMES","DOG","BROOMBILDA","SEEING HIM","CANDLE","DJANGO SCREAMS","IJS","CORA","MARSHA","SHIRTLESS DJANGO","CU BROOMHILDA","BROWN","BROWN CODY","ICZ","STEPHEN MOGUY"];
+
+const RAW_EDGES_DATA = {"geid_129_0":5,"geid_129_1":5,"geid_129_2":5,"geid_129_3":4,"geid_129_4":4,"geid_129_5":4,"geid_129_6":4,"geid_129_7":3,"geid_129_8":3,"geid_129_9":3,"geid_129_10":2,"geid_129_11":2,"geid_129_12":2,"geid_129_13":2,"geid_129_14":2,"geid_129_15":2,"geid_129_16":2,"geid_129_17":2,"geid_129_18":1,"geid_129_19":1,"geid_129_20":1,"geid_129_21":1,"geid_129_22":1,"geid_129_23":1,"geid_129_24":1,"geid_129_25":1,"geid_129_26":1,"geid_129_27":1,"geid_129_28":1,"geid_129_29":1,"geid_129_30":1,"geid_129_31":1,"geid_129_32":1,"geid_129_33":1,"geid_129_34":1,"geid_129_35":1,"geid_129_36":1,"geid_129_37":1,"geid_129_38":1,"geid_129_39":1,"geid_129_40":1,"geid_129_41":1,"geid_129_42":1,"geid_129_43":1,"geid_129_44":1,"geid_129_45":1,"geid_129_46":1,"geid_129_47":1,"geid_129_48":1,"geid_129_49":1,"geid_129_50":1,"geid_129_51":1,"geid_129_52":1,"geid_129_53":1,"geid_129_54":1,"geid_129_55":1,"geid_129_56":1,"geid_129_57":1,"geid_129_58":1,"geid_129_59":1,"geid_129_60":1,"geid_129_61":4,"geid_129_62":2,"geid_129_63":2,"geid_129_64":1,"geid_129_65":1,"geid_129_66":1,"geid_129_67":1,"geid_129_68":1,"geid_129_69":1,"geid_129_70":1,"geid_129_71":1,"geid_129_72":1,"geid_129_73":1,"geid_129_74":1,"geid_129_75":1,"geid_129_76":1,"geid_129_77":1,"geid_129_78":1,"geid_129_79":1,"geid_129_80":1,"geid_129_81":1,"geid_129_82":1,"geid_129_83":5,"geid_129_84":4,"geid_129_85":3,"geid_129_86":2,"geid_129_87":1,"geid_129_88":1,"geid_129_89":1,"geid_129_90":1,"geid_129_91":1,"geid_129_92":1,"geid_129_93":1,"geid_129_94":1,"geid_129_95":1,"geid_129_96":1,"geid_129_97":1,"geid_129_98":1,"geid_129_99":1,"geid_129_100":1,"geid_129_101":1,"geid_129_102":1,"geid_129_103":1,"geid_129_104":1,"geid_129_105":1,"geid_129_106":1,"geid_129_107":1,"geid_129_108":1,"geid_129_109":1,"geid_129_110":1,"geid_129_111":1,"geid_129_112":3,"geid_129_113":2,"geid_129_114":1,"geid_129_115":1,"geid_129_116":1,"geid_129_117":1,"geid_129_118":1,"geid_129_119":1,"geid_129_120":1,"geid_129_121":1,"geid_129_122":1,"geid_129_123":1,"geid_129_124":1,"geid_129_125":1,"geid_129_126":3,"geid_129_127":3,"geid_129_128":2,"geid_129_129":2,"geid_129_130":1,"geid_129_131":1,"geid_129_132":1,"geid_129_133":1,"geid_129_134":1,"geid_129_135":1,"geid_129_136":1,"geid_129_137":1,"geid_129_138":2,"geid_129_139":2,"geid_129_140":1,"geid_129_141":1,"geid_129_142":1,"geid_129_143":1,"geid_129_144":1,"geid_129_145":1,"geid_129_146":1,"geid_129_147":1,"geid_129_148":1,"geid_129_149":1,"geid_129_150":1,"geid_129_151":1,"geid_129_152":1,"geid_129_153":1,"geid_129_154":1,"geid_129_155":1,"geid_129_156":1,"geid_129_157":3,"geid_129_158":1,"geid_129_159":1,"geid_129_160":1,"geid_129_161":1,"geid_129_162":1,"geid_129_163":1,"geid_129_164":1,"geid_129_165":1,"geid_129_166":1,"geid_129_167":1,"geid_129_168":1,"geid_129_169":1,"geid_129_170":1,"geid_129_171":1,"geid_129_172":1,"geid_129_173":1,"geid_129_174":1,"geid_129_175":1,"geid_129_176":1,"geid_129_177":1,"geid_129_178":1,"geid_129_179":1,"geid_129_180":1,"geid_129_181":2,"geid_129_182":1,"geid_129_183":1,"geid_129_184":1,"geid_129_185":1,"geid_129_186":1,"geid_129_187":1,"geid_129_188":1,"geid_129_189":1,"geid_129_190":1,"geid_129_191":1,"geid_129_192":1,"geid_129_193":1,"geid_129_194":1,"geid_129_195":1,"geid_129_196":1,"geid_129_197":1,"geid_129_198":1,"geid_129_199":1,"geid_129_200":1,"geid_129_201":1,"geid_129_202":1,"geid_129_203":1,"geid_129_204":1,"geid_129_205":1,"geid_129_206":1,"geid_129_207":1,"geid_129_208":1,"geid_129_209":1,"geid_129_210":1,"geid_129_211":1,"geid_129_212":1,"geid_129_213":1,"geid_129_214":1,"geid_129_215":1,"geid_129_216":1,"geid_129_217":1,"geid_129_218":1,"geid_129_219":1,"geid_129_220":1,"geid_129_221":1,"geid_129_222":1,"geid_129_223":1,"geid_129_224":1,"geid_129_225":1,"geid_129_226":1,"geid_129_227":1,"geid_129_228":1,"geid_129_229":1,"geid_129_230":1,"geid_129_231":1,"geid_129_232":1,"geid_129_233":1,"geid_129_234":1,"geid_129_235":1,"geid_129_236":1,"geid_129_237":1,"geid_129_238":1,"geid_129_239":1,"geid_129_240":1,"geid_129_241":1,"geid_129_242":1,"geid_129_243":1,"geid_129_244":1,"geid_129_245":1,"geid_129_246":1,"geid_129_247":1,"geid_129_248":1,"geid_129_249":1,"geid_129_250":1,"geid_129_251":1,"geid_129_252":1,"geid_129_253":1,"geid_129_254":1,"geid_129_255":1,"geid_129_256":1,"geid_129_257":1,"geid_129_258":1,"geid_129_259":1,"geid_129_260":1,"geid_129_261":1,"geid_129_262":1,"geid_129_263":1,"geid_129_264":1,"geid_129_265":1,"geid_129_266":1,"geid_129_267":1,"geid_129_268":1,"geid_129_269":1,"geid_129_270":1,"geid_129_271":1,"geid_129_272":1,"geid_129_273":1,"geid_129_274":1,"geid_129_275":1,"geid_129_276":1,"geid_129_277":1,"geid_129_278":1,"geid_129_279":1,"geid_129_280":1,"geid_129_281":1,"geid_129_282":1,"geid_129_283":1,"geid_129_284":1,"geid_129_285":1,"geid_129_286":1,"geid_129_287":1,"geid_129_288":1,"geid_129_289":1,"geid_129_290":1,"geid_129_291":1,"geid_129_292":1,"geid_129_293":1,"geid_129_294":1,"geid_129_295":1,"geid_129_296":1,"geid_129_297":1,"geid_129_298":1,"geid_129_299":1,"geid_129_300":1,"geid_129_301":1,"geid_129_302":1,"geid_129_303":1,"geid_129_304":1,"geid_129_305":1,"geid_129_306":1,"geid_129_307":1,"geid_129_308":1,"geid_129_309":1,"geid_129_310":1,"geid_129_311":1,"geid_129_312":1,"geid_129_313":1,"geid_129_314":1,"geid_129_315":1,"geid_129_316":1,"geid_129_317":1,"geid_129_318":1,"geid_129_319":1,"geid_129_320":1,"geid_129_321":1,"geid_129_322":1,"geid_129_323":1,"geid_129_324":1,"geid_129_325":1,"geid_129_326":1,"geid_129_327":1,"geid_129_328":1,"geid_129_329":1,"geid_129_330":1,"geid_129_331":1,"geid_129_332":1,"geid_129_333":1,"geid_129_334":1,"geid_129_335":1,"geid_129_336":1,"geid_129_337":1,"geid_129_338":1,"geid_129_339":1,"geid_129_340":1,"geid_129_341":1,"geid_129_342":1,"geid_129_343":1,"geid_129_344":1,"geid_129_345":1};
+
+const RAW_EDGE_LIST = [{"key":"geid_129_0","source":"DJANGO","target":"MOGUY"},{"key":"geid_129_1","source":"DJANGO","target":"CALVIN CANDIE"},{"key":"geid_129_2","source":"DJANGO","target":"STEPHEN"},{"key":"geid_129_3","source":"DJANGO","target":"ACE WOODY"},{"key":"geid_129_4","source":"DJANGO","target":"LARA LEE"},{"key":"geid_129_5","source":"DJANGO","target":"CALVIN CANDLE"},{"key":"geid_129_6","source":"DJANGO","target":"TIMMY"},{"key":"geid_129_7","source":"DJANGO","target":"BROOMHILDA"},{"key":"geid_129_8","source":"DJANGO","target":"SPENCER"},{"key":"geid_129_9","source":"DJANGO","target":"SPENCER BENNETT"},{"key":"geid_129_10","source":"DJANGO","target":"RODNEY"},{"key":"geid_129_11","source":"DJANGO","target":"ROY"},{"key":"geid_129_12","source":"DJANGO","target":"BETINA"},{"key":"geid_129_13","source":"DJANGO","target":"LITTLE RAJ"},{"key":"geid_129_14","source":"DJANGO","target":"SCHULTZ"},{"key":"geid_129_15","source":"DJANGO","target":"NARRATOR"},{"key":"geid_129_16","source":"DJANGO","target":"SCOTTY"},{"key":"geid_129_17","source":"DJANGO","target":"CHESTER"},{"key":"geid_129_18","source":"DJANGO","target":"CHICKEN CHARLY"},{"key":"geid_129_19","source":"DJANGO","target":"FLOYD"},{"key":"geid_129_20","source":"DJANGO","target":"JANO"},{"key":"geid_129_21","source":"DJANGO","target":"ACE SPEC"},{"key":"geid_129_22","source":"DJANGO","target":"ACE SPECK"},{"key":"geid_129_23","source":"DJANGO","target":"DICKY SPECK"},{"key":"geid_129_24","source":"DJANGO","target":"TEXAS"},{"key":"geid_129_25","source":"DJANGO","target":"MARSHALL"},{"key":"geid_129_26","source":"DJANGO","target":"MARSHALL TATUM"},{"key":"geid_129_27","source":"DJANGO","target":"KNEELING DJANGO"},{"key":"geid_129_28","source":"DJANGO","target":"SPYGLASS POV"},{"key":"geid_129_29","source":"DJANGO","target":"BENNETT"},{"key":"geid_129_30","source":"DJANGO","target":"BIG JOHN"},{"key":"geid_129_31","source":"DJANGO","target":"BRADSHAW"},{"key":"geid_129_32","source":"DJANGO","target":"DOUG"},{"key":"geid_129_33","source":"DJANGO","target":"RANDY"},{"key":"geid_129_34","source":"DJANGO","target":"REDFISH"},{"key":"geid_129_35","source":"DJANGO","target":"ROBERT"},{"key":"geid_129_36","source":"DJANGO","target":"TERRY"},{"key":"geid_129_37","source":"DJANGO","target":"WILLARD"},{"key":"geid_129_38","source":"DJANGO","target":"TWO SHOT"},{"key":"geid_129_39","source":"DJANGO","target":"WE SEE"},{"key":"geid_129_40","source":"DJANGO","target":"MISSISSIPPI"},{"key":"geid_129_41","source":"DJANGO","target":"BELOW"},{"key":"geid_129_42","source":"DJANGO","target":"GREENVILLE"},{"key":"geid_129_43","source":"DJANGO","target":"I F"},{"key":"geid_129_44","source":"DJANGO","target":"JUDD"},{"key":"geid_129_45","source":"DJANGO","target":"RUSS"},{"key":"geid_129_46","source":"DJANGO","target":"UGLIER MAN"},{"key":"geid_129_47","source":"DJANGO","target":"UGLY MAN"},{"key":"geid_129_48","source":"DJANGO","target":"CANDIE"},{"key":"geid_129_49","source":"DJANGO","target":"PLAYER"},{"key":"geid_129_50","source":"DJANGO","target":"CLEO"},{"key":"geid_129_51","source":"DJANGO","target":"FRENCH MAID"},{"key":"geid_129_52","source":"DJANGO","target":"HOSTESS"},{"key":"geid_129_53","source":"DJANGO","target":"REFINED"},{"key":"geid_129_54","source":"DJANGO","target":"COCO CHIRPS"},{"key":"geid_129_55","source":"DJANGO","target":"SAY"},{"key":"geid_129_56","source":"DJANGO","target":"AMERIGO"},{"key":"geid_129_57","source":"DJANGO","target":"BARTENDER"},{"key":"geid_129_58","source":"DJANGO","target":"BARTHOLOMEW"},{"key":"geid_129_59","source":"DJANGO","target":"COCO"},{"key":"geid_129_60","source":"DJANGO","target":"SHEBA"},{"key":"geid_129_61","source":"MOGUY","target":"CALVIN CANDIE"},{"key":"geid_129_62","source":"MOGUY","target":"STEPHEN"},{"key":"geid_129_63","source":"MOGUY","target":"ACE WOODY"},{"key":"geid_129_64","source":"MOGUY","target":"LARA LEE"},{"key":"geid_129_65","source":"MOGUY","target":"CALVIN CANDLE"},{"key":"geid_129_66","source":"MOGUY","target":"TIMMY"},{"key":"geid_129_67","source":"MOGUY","target":"BROOMHILDA"},{"key":"geid_129_68","source":"MOGUY","target":"SPENCER"},{"key":"geid_129_69","source":"MOGUY","target":"SPENCER BENNETT"},{"key":"geid_129_70","source":"MOGUY","target":"RODNEY"},{"key":"geid_129_71","source":"MOGUY","target":"ROY"},{"key":"geid_129_72","source":"MOGUY","target":"BETINA"},{"key":"geid_129_73","source":"MOGUY","target":"LITTLE RAJ"},{"key":"geid_129_74","source":"MOGUY","target":"SCHULTZ"},{"key":"geid_129_75","source":"MOGUY","target":"KNEELING DJANGO"},{"key":"geid_129_76","source":"MOGUY","target":"SPYGLASS POV"},{"key":"geid_129_77","source":"MOGUY","target":"BENNETT"},{"key":"geid_129_78","source":"MOGUY","target":"BIG JOHN"},{"key":"geid_129_79","source":"MOGUY","target":"CANDIE"},{"key":"geid_129_80","source":"MOGUY","target":"PLAYER"},{"key":"geid_129_81","source":"MOGUY","target":"AMERIGO"},{"key":"geid_129_82","source":"MOGUY","target":"WE CUT"},{"key":"geid_129_83","source":"CALVIN CANDIE","target":"STEPHEN"},{"key":"geid_129_84","source":"CALVIN CANDIE","target":"ACE WOODY"},{"key":"geid_129_85","source":"CALVIN CANDIE","target":"LARA LEE"},{"key":"geid_129_86","source":"CALVIN CANDIE","target":"CALVIN CANDLE"},{"key":"geid_129_87","source":"CALVIN CANDIE","target":"TIMMY"},{"key":"geid_129_88","source":"CALVIN CANDIE","target":"BROOMHILDA"},{"key":"geid_129_89","source":"CALVIN CANDIE","target":"SPENCER"},{"key":"geid_129_90","source":"CALVIN CANDIE","target":"SPENCER BENNETT"},{"key":"geid_129_91","source":"CALVIN CANDIE","target":"RODNEY"},{"key":"geid_129_92","source":"CALVIN CANDIE","target":"ROY"},{"key":"geid_129_93","source":"CALVIN CANDIE","target":"BETINA"},{"key":"geid_129_94","source":"CALVIN CANDIE","target":"LITTLE RAJ"},{"key":"geid_129_95","source":"CALVIN CANDIE","target":"KNEELING DJANGO"},{"key":"geid_129_96","source":"CALVIN CANDIE","target":"SPYGLASS POV"},{"key":"geid_129_97","source":"CALVIN CANDIE","target":"BENNETT"},{"key":"geid_129_98","source":"CALVIN CANDIE","target":"BIG JOHN"},{"key":"geid_129_99","source":"CALVIN CANDIE","target":"CANDIE"},{"key":"geid_129_100","source":"CALVIN CANDIE","target":"PLAYER"},{"key":"geid_129_101","source":"CALVIN CANDIE","target":"CLEO"},{"key":"geid_129_102","source":"CALVIN CANDIE","target":"FRENCH MAID"},{"key":"geid_129_103","source":"CALVIN CANDIE","target":"HOSTESS"},{"key":"geid_129_104","source":"CALVIN CANDIE","target":"REFINED"},{"key":"geid_129_105","source":"CALVIN CANDIE","target":"AMERIGO"},{"key":"geid_129_106","source":"CALVIN CANDIE","target":"BARTENDER"},{"key":"geid_129_107","source":"CALVIN CANDIE","target":"BARTHOLOMEW"},{"key":"geid_129_108","source":"CALVIN CANDIE","target":"COCO"},{"key":"geid_129_109","source":"CALVIN CANDIE","target":"SHEBA"},{"key":"geid_129_110","source":"CALVIN CANDIE","target":"WE CUT"},{"key":"geid_129_111","source":"CALVIN CANDIE","target":"BILLY CRASH"},{"key":"geid_129_112","source":"STEPHEN","target":"ACE WOODY"},{"key":"geid_129_113","source":"STEPHEN","target":"LARA LEE"},{"key":"geid_129_114","source":"STEPHEN","target":"CALVIN CANDLE"},{"key":"geid_129_115","source":"STEPHEN","target":"TIMMY"},{"key":"geid_129_116","source":"STEPHEN","target":"BROOMHILDA"},{"key":"geid_129_117","source":"STEPHEN","target":"SPENCER"},{"key":"geid_129_118","source":"STEPHEN","target":"SPENCER BENNETT"},{"key":"geid_129_119","source":"STEPHEN","target":"RODNEY"},{"key":"geid_129_120","source":"STEPHEN","target":"ROY"},{"key":"geid_129_121","source":"STEPHEN","target":"BETINA"},{"key":"geid_129_122","source":"STEPHEN","target":"LITTLE RAJ"},{"key":"geid_129_123","source":"STEPHEN","target":"KNEELING DJANGO"},{"key":"geid_129_124","source":"STEPHEN","target":"SPYGLASS POV"},{"key":"geid_129_125","source":"STEPHEN","target":"BENNETT"},{"key":"geid_129_126","source":"STEPHEN","target":"BIG JOHN"},{"key":"geid_129_127","source":"STEPHEN","target":"CANDIE"},{"key":"geid_129_128","source":"STEPHEN","target":"PLAYER"},{"key":"geid_129_129","source":"STEPHEN","target":"AMERIGO"},{"key":"geid_129_130","source":"STEPHEN","target":"WE CUT"},{"key":"geid_129_131","source":"STEPHEN","target":"BILLY CRASH"},{"key":"geid_129_132","source":"ACE WOODY","target":"LARA LEE"},{"key":"geid_129_133","source":"ACE WOODY","target":"CALVIN CANDLE"},{"key":"geid_129_134","source":"ACE WOODY","target":"TIMMY"},{"key":"geid_129_135","source":"ACE WOODY","target":"BROOMHILDA"},{"key":"geid_129_136","source":"ACE WOODY","target":"SPENCER"},{"key":"geid_129_137","source":"ACE WOODY","target":"SPENCER BENNETT"},{"key":"geid_129_138","source":"ACE WOODY","target":"RODNEY"},{"key":"geid_129_139","source":"ACE WOODY","target":"ROY"},{"key":"geid_129_140","source":"ACE WOODY","target":"BETINA"},{"key":"geid_129_141","source":"ACE WOODY","target":"LITTLE RAJ"},{"key":"geid_129_142","source":"ACE WOODY","target":"KNEELING DJANGO"},{"key":"geid_129_143","source":"ACE WOODY","target":"SPYGLASS POV"},{"key":"geid_129_144","source":"ACE WOODY","target":"BENNETT"},{"key":"geid_129_145","source":"ACE WOODY","target":"BIG JOHN"},{"key":"geid_129_146","source":"ACE WOODY","target":"SCHULTZ"},{"key":"geid_129_147","source":"ACE WOODY","target":"BILLY CRASH"},{"key":"geid_129_148","source":"LARA LEE","target":"CALVIN CANDLE"},{"key":"geid_129_149","source":"LARA LEE","target":"TIMMY"},{"key":"geid_129_150","source":"LARA LEE","target":"BROOMHILDA"},{"key":"geid_129_151","source":"LARA LEE","target":"SPENCER"},{"key":"geid_129_152","source":"LARA LEE","target":"SPENCER BENNETT"},{"key":"geid_129_153","source":"LARA LEE","target":"RODNEY"},{"key":"geid_129_154","source":"LARA LEE","target":"ROY"},{"key":"geid_129_155","source":"LARA LEE","target":"BETINA"},{"key":"geid_129_156","source":"LARA LEE","target":"LITTLE RAJ"},{"key":"geid_129_157","source":"LARA LEE","target":"KNEELING DJANGO"},{"key":"geid_129_158","source":"LARA LEE","target":"SPYGLASS POV"},{"key":"geid_129_159","source":"LARA LEE","target":"BENNETT"},{"key":"geid_129_160","source":"LARA LEE","target":"BIG JOHN"},{"key":"geid_129_161","source":"LARA LEE","target":"SCHULTZ"},{"key":"geid_129_162","source":"LARA LEE","target":"BILLY CRASH"},{"key":"geid_129_163","source":"CALVIN CANDLE","target":"TIMMY"},{"key":"geid_129_164","source":"CALVIN CANDLE","target":"BROOMHILDA"},{"key":"geid_129_165","source":"CALVIN CANDLE","target":"SPENCER"},{"key":"geid_129_166","source":"CALVIN CANDLE","target":"SPENCER BENNETT"},{"key":"geid_129_167","source":"CALVIN CANDLE","target":"RODNEY"},{"key":"geid_129_168","source":"CALVIN CANDLE","target":"ROY"},{"key":"geid_129_169","source":"CALVIN CANDLE","target":"BETINA"},{"key":"geid_129_170","source":"CALVIN CANDLE","target":"LITTLE RAJ"},{"key":"geid_129_171","source":"CALVIN CANDLE","target":"KNEELING DJANGO"},{"key":"geid_129_172","source":"CALVIN CANDLE","target":"SPYGLASS POV"},{"key":"geid_129_173","source":"CALVIN CANDLE","target":"BENNETT"},{"key":"geid_129_174","source":"CALVIN CANDLE","target":"BIG JOHN"},{"key":"geid_129_175","source":"CALVIN CANDLE","target":"SCHULTZ"},{"key":"geid_129_176","source":"CALVIN CANDLE","target":"BILLY CRASH"},{"key":"geid_129_177","source":"TIMMY","target":"BROOMHILDA"},{"key":"geid_129_178","source":"TIMMY","target":"SPENCER"},{"key":"geid_129_179","source":"TIMMY","target":"SPENCER BENNETT"},{"key":"geid_129_180","source":"TIMMY","target":"RODNEY"},{"key":"geid_129_181","source":"TIMMY","target":"ROY"},{"key":"geid_129_182","source":"TIMMY","target":"BETINA"},{"key":"geid_129_183","source":"TIMMY","target":"LITTLE RAJ"},{"key":"geid_129_184","source":"TIMMY","target":"KNEELING DJANGO"},{"key":"geid_129_185","source":"TIMMY","target":"SPYGLASS POV"},{"key":"geid_129_186","source":"TIMMY","target":"BENNETT"},{"key":"geid_129_187","source":"TIMMY","target":"BIG JOHN"},{"key":"geid_129_188","source":"TIMMY","target":"SCHULTZ"},{"key":"geid_129_189","source":"BROOMHILDA","target":"SPENCER"},{"key":"geid_129_190","source":"BROOMHILDA","target":"SPENCER BENNETT"},{"key":"geid_129_191","source":"BROOMHILDA","target":"RODNEY"},{"key":"geid_129_192","source":"BROOMHILDA","target":"ROY"},{"key":"geid_129_193","source":"BROOMHILDA","target":"BETINA"},{"key":"geid_129_194","source":"BROOMHILDA","target":"LITTLE RAJ"},{"key":"geid_129_195","source":"BROOMHILDA","target":"KNEELING DJANGO"},{"key":"geid_129_196","source":"BROOMHILDA","target":"SPYGLASS POV"},{"key":"geid_129_197","source":"BROOMHILDA","target":"BENNETT"},{"key":"geid_129_198","source":"BROOMHILDA","target":"BIG JOHN"},{"key":"geid_129_199","source":"BROOMHILDA","target":"SCHULTZ"},{"key":"geid_129_200","source":"SPENCER","target":"SPENCER BENNETT"},{"key":"geid_129_201","source":"SPENCER","target":"RODNEY"},{"key":"geid_129_202","source":"SPENCER","target":"ROY"},{"key":"geid_129_203","source":"SPENCER","target":"BETINA"},{"key":"geid_129_204","source":"SPENCER","target":"LITTLE RAJ"},{"key":"geid_129_205","source":"SPENCER","target":"KNEELING DJANGO"},{"key":"geid_129_206","source":"SPENCER","target":"SPYGLASS POV"},{"key":"geid_129_207","source":"SPENCER","target":"BENNETT"},{"key":"geid_129_208","source":"SPENCER","target":"BIG JOHN"},{"key":"geid_129_209","source":"SPENCER BENNETT","target":"RODNEY"},{"key":"geid_129_210","source":"SPENCER BENNETT","target":"ROY"},{"key":"geid_129_211","source":"SPENCER BENNETT","target":"BETINA"},{"key":"geid_129_212","source":"SPENCER BENNETT","target":"LITTLE RAJ"},{"key":"geid_129_213","source":"SPENCER BENNETT","target":"KNEELING DJANGO"},{"key":"geid_129_214","source":"SPENCER BENNETT","target":"SPYGLASS POV"},{"key":"geid_129_215","source":"SPENCER BENNETT","target":"BENNETT"},{"key":"geid_129_216","source":"SPENCER BENNETT","target":"BIG JOHN"},{"key":"geid_129_217","source":"RODNEY","target":"ROY"},{"key":"geid_129_218","source":"RODNEY","target":"BETINA"},{"key":"geid_129_219","source":"RODNEY","target":"LITTLE RAJ"},{"key":"geid_129_220","source":"RODNEY","target":"KNEELING DJANGO"},{"key":"geid_129_221","source":"RODNEY","target":"SPYGLASS POV"},{"key":"geid_129_222","source":"RODNEY","target":"BENNETT"},{"key":"geid_129_223","source":"RODNEY","target":"BIG JOHN"},{"key":"geid_129_224","source":"ROY","target":"BETINA"},{"key":"geid_129_225","source":"ROY","target":"LITTLE RAJ"},{"key":"geid_129_226","source":"ROY","target":"KNEELING DJANGO"},{"key":"geid_129_227","source":"ROY","target":"SPYGLASS POV"},{"key":"geid_129_228","source":"ROY","target":"BENNETT"},{"key":"geid_129_229","source":"ROY","target":"BIG JOHN"},{"key":"geid_129_230","source":"BETINA","target":"LITTLE RAJ"},{"key":"geid_129_231","source":"BETINA","target":"KNEELING DJANGO"},{"key":"geid_129_232","source":"BETINA","target":"SPYGLASS POV"},{"key":"geid_129_233","source":"BETINA","target":"LITTLE RAJ"},{"key":"geid_129_234","source":"BETINA","target":"SPYGLASS POV"},{"key":"geid_129_235","source":"LITTLE RAJ","target":"KNEELING DJANGO"},{"key":"geid_129_236","source":"LITTLE RAJ","target":"SPYGLASS POV"},{"key":"geid_129_237","source":"LITTLE RAJ","target":"BENNETT"},{"key":"geid_129_238","source":"LITTLE RAJ","target":"BIG JOHN"},{"key":"geid_129_239","source":"LITTLE RAJ","target":"SCHULTZ"},{"key":"geid_129_240","source":"SCHULTZ","target":"BENNETT"},{"key":"geid_129_241","source":"SCHULTZ","target":"BIG JOHN"},{"key":"geid_129_242","source":"SCHULTZ","target":"AMERIGO"},{"key":"geid_129_243","source":"SCHULTZ","target":"BARTENDER"},{"key":"geid_129_244","source":"SCHULTZ","target":"BARTHOLOMEW"},{"key":"geid_129_245","source":"SCHULTZ","target":"COCO"},{"key":"geid_129_246","source":"SCHULTZ","target":"SHEBA"},{"key":"geid_129_247","source":"SCHULTZ","target":"WE CUT"},{"key":"geid_129_248","source":"NARRATOR","target":"SCOTTY"},{"key":"geid_129_249","source":"NARRATOR","target":"UGLIER MAN"},{"key":"geid_129_250","source":"NARRATOR","target":"UGLY MAN"},{"key":"geid_129_251","source":"NARRATOR","target":"CANDIE"},{"key":"geid_129_252","source":"NARRATOR","target":"PLAYER"},{"key":"geid_129_253","source":"SCOTTY","target":"UGLIER MAN"},{"key":"geid_129_254","source":"SCOTTY","target":"UGLY MAN"},{"key":"geid_129_255","source":"SCOTTY","target":"CANDIE"},{"key":"geid_129_256","source":"SCOTTY","target":"PLAYER"},{"key":"geid_129_257","source":"CHESTER","target":"CHICKEN CHARLY"},{"key":"geid_129_258","source":"CHESTER","target":"FLOYD"},{"key":"geid_129_259","source":"CHESTER","target":"JANO"},{"key":"geid_129_260","source":"CHESTER","target":"CORA"},{"key":"geid_129_261","source":"CHICKEN CHARLY","target":"FLOYD"},{"key":"geid_129_262","source":"CHICKEN CHARLY","target":"JANO"},{"key":"geid_129_263","source":"CHICKEN CHARLY","target":"CORA"},{"key":"geid_129_264","source":"FLOYD","target":"JANO"},{"key":"geid_129_265","source":"FLOYD","target":"CORA"},{"key":"geid_129_266","source":"ACE SPEC","target":"ACE SPECK"},{"key":"geid_129_267","source":"ACE SPEC","target":"DICKY SPECK"},{"key":"geid_129_268","source":"ACE SPECK","target":"DICKY SPECK"},{"key":"geid_129_269","source":"MARSHALL","target":"MARSHALL TATUM"},{"key":"geid_129_270","source":"KNEELING DJANGO","target":"SPYGLASS POV"},{"key":"geid_129_271","source":"BENNETT","target":"BIG JOHN"},{"key":"geid_129_272","source":"BRADSHAW","target":"DOUG"},{"key":"geid_129_273","source":"BRADSHAW","target":"RANDY"},{"key":"geid_129_274","source":"BRADSHAW","target":"REDFISH"},{"key":"geid_129_275","source":"BRADSHAW","target":"ROBERT"},{"key":"geid_129_276","source":"BRADSHAW","target":"TERRY"},{"key":"geid_129_277","source":"BRADSHAW","target":"WILLARD"},{"key":"geid_129_278","source":"DOUG","target":"RANDY"},{"key":"geid_129_279","source":"DOUG","target":"REDFISH"},{"key":"geid_129_280","source":"DOUG","target":"ROBERT"},{"key":"geid_129_281","source":"DOUG","target":"TERRY"},{"key":"geid_129_282","source":"DOUG","target":"WILLARD"},{"key":"geid_129_283","source":"RANDY","target":"REDFISH"},{"key":"geid_129_284","source":"RANDY","target":"ROBERT"},{"key":"geid_129_285","source":"RANDY","target":"TERRY"},{"key":"geid_129_286","source":"RANDY","target":"WILLARD"},{"key":"geid_129_287","source":"REDFISH","target":"ROBERT"},{"key":"geid_129_288","source":"REDFISH","target":"TERRY"},{"key":"geid_129_289","source":"REDFISH","target":"WILLARD"},{"key":"geid_129_290","source":"ROBERT","target":"TERRY"},{"key":"geid_129_291","source":"ROBERT","target":"WILLARD"},{"key":"geid_129_292","source":"TERRY","target":"WILLARD"},{"key":"geid_129_293","source":"BELOW","target":"GREENVILLE"},{"key":"geid_129_294","source":"BELOW","target":"I F"},{"key":"geid_129_295","source":"BELOW","target":"JUDD"},{"key":"geid_129_296","source":"BELOW","target":"RUSS"},{"key":"geid_129_297","source":"GREENVILLE","target":"I F"},{"key":"geid_129_298","source":"GREENVILLE","target":"JUDD"},{"key":"geid_129_299","source":"GREENVILLE","target":"RUSS"},{"key":"geid_129_300","source":"I F","target":"JUDD"},{"key":"geid_129_301","source":"I F","target":"RUSS"},{"key":"geid_129_302","source":"JUDD","target":"RUSS"},{"key":"geid_129_303","source":"UGLIER MAN","target":"UGLY MAN"},{"key":"geid_129_304","source":"CANDIE","target":"PLAYER"},{"key":"geid_129_305","source":"CLEO","target":"FRENCH MAID"},{"key":"geid_129_306","source":"CLEO","target":"HOSTESS"},{"key":"geid_129_307","source":"CLEO","target":"REFINED"},{"key":"geid_129_308","source":"FRENCH MAID","target":"HOSTESS"},{"key":"geid_129_309","source":"FRENCH MAID","target":"REFINED"},{"key":"geid_129_310","source":"HOSTESS","target":"REFINED"},{"key":"geid_129_311","source":"COCO CHIRPS","target":"SAY"},{"key":"geid_129_312","source":"AMERIGO","target":"BARTENDER"},{"key":"geid_129_313","source":"AMERIGO","target":"BARTHOLOMEW"},{"key":"geid_129_314","source":"AMERIGO","target":"COCO"},{"key":"geid_129_315","source":"AMERIGO","target":"SHEBA"},{"key":"geid_129_316","source":"AMERIGO","target":"WE CUT"},{"key":"geid_129_317","source":"BARTENDER","target":"BARTHOLOMEW"},{"key":"geid_129_318","source":"BARTENDER","target":"COCO"},{"key":"geid_129_319","source":"BARTENDER","target":"SHEBA"},{"key":"geid_129_320","source":"BARTENDER","target":"WE CUT"},{"key":"geid_129_321","source":"BARTHOLOMEW","target":"COCO"},{"key":"geid_129_322","source":"BARTHOLOMEW","target":"SHEBA"},{"key":"geid_129_323","source":"BARTHOLOMEW","target":"WE CUT"},{"key":"geid_129_324","source":"COCO","target":"SHEBA"},{"key":"geid_129_325","source":"COCO","target":"WE CUT"},{"key":"geid_129_326","source":"SHEBA","target":"WE CUT"},{"key":"geid_129_327","source":"BILLY CRASH","target":"PTE"},{"key":"geid_129_328","source":"BILLY CRASH","target":"TWO MEN"},{"key":"geid_129_329","source":"BILLY CRASH","target":"CU BROOMHILDA"},{"key":"geid_129_330","source":"PTE","target":"TWO MEN"},{"key":"geid_129_331","source":"O V","target":"TRACKERS"},{"key":"geid_129_332","source":"AND DJANGO","target":"BIG FRED"},{"key":"geid_129_333","source":"AND DJANGO","target":"FRED"},{"key":"geid_129_334","source":"AND DJANGO","target":"SIDNEY JAMES"},{"key":"geid_129_335","source":"BIG FRED","target":"FRED"},{"key":"geid_129_336","source":"BIG FRED","target":"SIDNEY JAMES"},{"key":"geid_129_337","source":"FRED","target":"SIDNEY JAMES"},{"key":"geid_129_338","source":"DJANGO SCREAMS","target":"IJS"},{"key":"geid_129_339","source":"MARSHA","target":"SHIRTLESS DJANGO"},{"key":"geid_129_340","source":"BROWN","target":"BROWN CODY"},{"key":"geid_129_341","source":"BROWN","target":"ICZ"},{"key":"geid_129_342","source":"BROWN","target":"STEPHEN MOGUY"},{"key":"geid_129_343","source":"BROWN CODY","target":"ICZ"},{"key":"geid_129_344","source":"BROWN CODY","target":"STEPHEN MOGUY"},{"key":"geid_129_345","source":"ICZ","target":"STEPHEN MOGUY"}];
+
+// Build graph data
+const nodeIds = RAW_NODES;
+const edges = RAW_EDGE_LIST.map(e => ({source: e.source, target: e.target, weight: RAW_EDGES_DATA[e.key] || 1}));
+
+// ============================================================
+// SNA CALCULATIONS
+// ============================================================
+
+// Adjacency map
+const adj = {}; // adj[u] = [{v, weight}]
+nodeIds.forEach(n => adj[n] = []);
+edges.forEach(e => {
+  adj[e.source].push({v: e.target, w: e.weight});
+  adj[e.target].push({v: e.source, w: e.weight});
+});
+
+// 1. Weighted Degree
+const degree = {};
+nodeIds.forEach(n => degree[n] = adj[n].reduce((s, x) => s + x.w, 0));
+
+// 2. Betweenness Centrality (Brandes, BFS)
+const betweenness = {};
+nodeIds.forEach(n => betweenness[n] = 0);
+nodeIds.forEach(s => {
+  const stack = [], pred = {}, sigma = {}, dist = {}, delta = {};
+  nodeIds.forEach(n => { pred[n] = []; sigma[n] = 0; dist[n] = -1; delta[n] = 0; });
+  sigma[s] = 1; dist[s] = 0;
+  const q = [s];
+  while (q.length) {
+    const v = q.shift(); stack.push(v);
+    adj[v].forEach(({v: w}) => {
+      if (dist[w] < 0) { q.push(w); dist[w] = dist[v] + 1; }
+      if (dist[w] === dist[v] + 1) { sigma[w] += sigma[v]; pred[w].push(v); }
+    });
+  }
+  while (stack.length) {
+    const w = stack.pop();
+    pred[w].forEach(v => {
+      delta[v] += (sigma[v] / sigma[w]) * (1 + delta[w]);
+    });
+    if (w !== s) betweenness[w] += delta[w];
+  }
+});
+const n = nodeIds.length;
+const bnorm = (n - 1) * (n - 2) / 2;
+nodeIds.forEach(v => betweenness[v] /= bnorm);
+
+// 3. Closeness Centrality (BFS)
+const closeness = {};
+nodeIds.forEach(s => {
+  const dist = {}; nodeIds.forEach(n => dist[n] = -1);
+  dist[s] = 0; const q = [s]; let total = 0, reached = 0;
+  while (q.length) {
+    const v = q.shift();
+    adj[v].forEach(({v: w}) => {
+      if (dist[w] < 0) { dist[w] = dist[v] + 1; total += dist[w]; reached++; q.push(w); }
+    });
+  }
+  closeness[s] = reached > 0 ? (reached / total) * (reached / (n - 1)) : 0;
+});
+
+// 4. PageRank
+const pagerank = {};
+const d = 0.85, iters = 20;
+nodeIds.forEach(n => pagerank[n] = 1 / nodeIds.length);
+for (let i = 0; i < iters; i++) {
+  const newPR = {};
+  nodeIds.forEach(v => {
+    let sum = 0;
+    adj[v].forEach(({v: u}) => {
+      sum += pagerank[u] / (adj[u].length || 1);
+    });
+    newPR[v] = (1 - d) / nodeIds.length + d * sum;
+  });
+  nodeIds.forEach(v => pagerank[v] = newPR[v]);
+}
+
+// 5. Local Clustering Coefficient
+const clustering = {};
+nodeIds.forEach(v => {
+  const neighbors = new Set(adj[v].map(x => x.v));
+  const k = neighbors.size;
+  if (k < 2) { clustering[v] = 0; return; }
+  let triangles = 0;
+  const nbArr = [...neighbors];
+  for (let i = 0; i < nbArr.length; i++)
+    for (let j = i + 1; j < nbArr.length; j++)
+      if (adj[nbArr[i]].some(x => x.v === nbArr[j])) triangles++;
+  clustering[v] = 2 * triangles / (k * (k - 1));
+});
+
+// 6. Community Detection (Greedy Modularity simplified — label propagation)
+const community = {};
+nodeIds.forEach((n, i) => community[n] = i);
+for (let iter = 0; iter < 10; iter++) {
+  const shuffled = [...nodeIds].sort(() => Math.random() - 0.5);
+  shuffled.forEach(v => {
+    const counts = {};
+    adj[v].forEach(({v: u}) => {
+      const c = community[u];
+      counts[c] = (counts[c] || 0) + 1;
+    });
+    const best = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+    if (best) community[v] = parseInt(best[0]);
+  });
+}
+// Remap community IDs to 0..k
+const commMap = {};
+let cIdx = 0;
+Object.values(community).forEach(c => { if (!(c in commMap)) commMap[c] = cIdx++; });
+nodeIds.forEach(v => community[v] = commMap[community[v]]);
+const numComm = cIdx;
+
+// 7. Network density
+const density = 2 * edges.length / (n * (n - 1));
+
+// 8. Bridges (Tarjan)
+const bridges = new Set();
+{
+  const visited = {}, disc = {}, low = {}, parent = {};
+  let timer = 0;
+  nodeIds.forEach(n => visited[n] = false);
+  function dfs(u) {
+    visited[u] = true; disc[u] = low[u] = timer++;
+    adj[u].forEach(({v: w}) => {
+      if (!visited[w]) {
+        parent[w] = u; dfs(w);
+        low[u] = Math.min(low[u], low[w]);
+        if (low[w] > disc[u]) bridges.add(`${u}|${w}`);
+      } else if (w !== parent[u]) {
+        low[u] = Math.min(low[u], disc[w]);
+      }
+    });
+  }
+  nodeIds.forEach(n => { if (!visited[n]) dfs(n); });
+}
+
+// Community names
+const commNames = {};
+const commColors = ['#c9922a','#8b1a1a','#3a6a8a','#5a8a3a','#7a3a8a','#8a6a2a','#2a6a5a'];
+// Find top node per community
+const commTopNode = {};
+nodeIds.forEach(v => {
+  const c = community[v];
+  if (!commTopNode[c] || degree[v] > degree[commTopNode[c]]) commTopNode[c] = v;
+});
+const manualNames = {
+  0: 'Świat Django',
+  1: 'Dwór Candiego',
+  2: 'Świat Schulza',
+  3: 'Mandingos & Fighters',
+  4: 'Postacie Epizodyczne',
+  5: 'Sceny Zbiorowe',
+  6: 'Pozostałe'
+};
+
+// Build nodes data
+const nodesData = nodeIds.map(id => ({
+  id,
+  degree: degree[id],
+  betweenness: betweenness[id],
+  closeness: closeness[id],
+  pagerank: pagerank[id],
+  clustering: clustering[id],
+  community: community[id]
+}));
+
+// Normalize metrics for display
+function normalize(arr) {
+  const mn = Math.min(...arr), mx = Math.max(...arr);
+  return arr.map(v => mx === mn ? 0 : (v - mn) / (mx - mn));
+}
+const degVals = nodesData.map(d => d.degree);
+const betVals = nodesData.map(d => d.betweenness);
+const clVals = nodesData.map(d => d.closeness);
+const prVals = nodesData.map(d => d.pagerank);
+const degNorm = normalize(degVals);
+const betNorm = normalize(betVals);
+const clNorm = normalize(clVals);
+const prNorm = normalize(prVals);
+nodesData.forEach((d, i) => {
+  d.degNorm = degNorm[i]; d.betNorm = betNorm[i];
+  d.clNorm = clNorm[i]; d.prNorm = prNorm[i];
+});
+const nodeMap = {};
+nodesData.forEach(d => nodeMap[d.id] = d);
+
+// ============================================================
+// D3 VISUALIZATION
+// ============================================================
+
+const svg = d3.select('#graph-svg');
+const container = svg.append('g').attr('class', 'container');
+
+const zoom = d3.zoom()
+  .scaleExtent([0.1, 5])
+  .on('zoom', e => container.attr('transform', e.transform));
+svg.call(zoom);
+
+// Click background to reset highlight
+svg.on('click', function(event) {
+  if (event.target === this || event.target.tagName === 'svg') {
+    resetHighlight();
+    showEmptyCard();
+    activeNodeId = null;
+  }
+});
+
+// Color scale
+function commColor(c) { return commColors[c % commColors.length]; }
+
+let currentMode = 'degree';
+let activeNodeId = null;
+let filterComm = null;
+
+function nodeSize(d) {
+  const base = 5, range = 18;
+  if (currentMode === 'degree') return base + d.degNorm * range;
+  if (currentMode === 'betweenness') return base + d.betNorm * range;
+  if (currentMode === 'closeness') return base + d.clNorm * range;
+  if (currentMode === 'pagerank') return base + d.prNorm * range;
+  return base + d.degNorm * range;
+}
+
+const linkData = edges.map(e => ({
+  source: e.source, target: e.target, weight: e.weight,
+  isBridge: bridges.has(`${e.source}|${e.target}`) || bridges.has(`${e.target}|${e.source}`)
+}));
+
+const simulation = d3.forceSimulation(nodesData)
+  .force('link', d3.forceLink(linkData).id(d => d.id)
+    .distance(d => 80 / Math.sqrt(d.weight + 1))
+    .strength(0.3))
+  .force('charge', d3.forceManyBody().strength(-120))
+  .force('center', d3.forceCenter(0, 0))
+  .force('collision', d3.forceCollide().radius(d => nodeSize(d) + 4));
+
+const link = container.append('g').selectAll('line')
+  .data(linkData).join('line')
+  .attr('stroke', d => d.isBridge ? '#c9922a' : '#3a2c1a')
+  .attr('stroke-width', d => Math.max(0.5, Math.min(4, d.weight * 0.8)))
+  .attr('stroke-opacity', d => 0.15 + d.weight * 0.08);
+
+const node = container.append('g').selectAll('g')
+  .data(nodesData).join('g')
+  .attr('class', 'node-g')
+  .call(d3.drag()
+    .on('start', (e, d) => { if (!e.active) simulation.alphaTarget(0.1).restart(); d.fx = d.x; d.fy = d.y; })
+    .on('drag', (e, d) => { d.fx = e.x; d.fy = e.y; })
+    .on('end', (e, d) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }));
+
+const circles = node.append('circle')
+  .attr('r', d => nodeSize(d))
+  .attr('fill', d => commColor(d.community))
+  .attr('stroke', d => d3.color(commColor(d.community)).brighter(0.5))
+  .attr('stroke-width', 1)
+  .attr('fill-opacity', 0.85);
+
+const labels = node.append('text')
+  .text(d => d.id)
+  .attr('text-anchor', 'middle')
+  .attr('dy', d => nodeSize(d) + 10)
+  .attr('font-family', "'Special Elite', cursive")
+  .attr('font-size', d => Math.max(7, Math.min(11, nodeSize(d) * 0.7)))
+  .attr('fill', '#b89a6a')
+  .attr('pointer-events', 'none');
+
+node.on('mousemove', function(event, d) {
+  const tt = document.getElementById('tooltip');
+  tt.style.display = 'block';
+  tt.style.left = (event.clientX + 14) + 'px';
+  tt.style.top = (event.clientY - 10) + 'px';
+  document.getElementById('tt-name').textContent = d.id;
+  document.getElementById('tt-deg').textContent = d.degree;
+  document.getElementById('tt-bet').textContent = d.betweenness.toFixed(4);
+  document.getElementById('tt-pr').textContent = d.pagerank.toFixed(4);
+}).on('mouseleave', function() {
+  document.getElementById('tooltip').style.display = 'none';
+}).on('click', function(event, d) {
+  event.stopPropagation();
+  activeNodeId = d.id;
+  highlightNode(d);
+  showNodeCard(d);
+});
+
+simulation.on('tick', () => {
+  link
+    .attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+    .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+  node.attr('transform', d => `translate(${d.x},${d.y})`);
+});
+
+function highlightNode(d) {
+  const neighborIds = new Set(adj[d.id].map(x => x.v));
+  neighborIds.add(d.id);
+  node.select('circle')
+    .attr('fill-opacity', nd => neighborIds.has(nd.id) ? 1 : 0.07)
+    .attr('stroke-width', nd => nd.id === d.id ? 3 : 1)
+    .attr('stroke', nd => nd.id === d.id ? '#e8b85a' : d3.color(commColor(nd.community)).brighter(0.5));
+  node.select('text').attr('fill-opacity', nd => neighborIds.has(nd.id) ? 1 : 0.08);
+  link
+    .attr('stroke-opacity', l => (l.source.id === d.id || l.target.id === d.id) ? 0.8 : 0.03)
+    .attr('stroke', l => (l.source.id === d.id || l.target.id === d.id) ? '#c9922a' : '#3a2c1a');
+}
+
+function resetHighlight() {
+  node.select('circle')
+    .attr('fill-opacity', 0.85)
+    .attr('stroke-width', 1)
+    .attr('stroke', d => d3.color(commColor(d.community)).brighter(0.5));
+  node.select('text').attr('fill-opacity', 1);
+  link
+    .attr('stroke-opacity', d => 0.15 + d.weight * 0.08)
+    .attr('stroke', d => d.isBridge ? '#c9922a' : '#3a2c1a');
+}
+
+// Controls
+document.querySelectorAll('.ctrl-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const mode = this.dataset.mode;
+    if (mode === 'reset') {
+      currentMode = 'degree';
+      document.querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector('[data-mode="degree"]').classList.add('active');
+    } else {
+      currentMode = mode;
+      document.querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+    }
+    circles.transition().duration(500).attr('r', d => nodeSize(d));
+    labels.transition().duration(500)
+      .attr('dy', d => nodeSize(d) + 10)
+      .attr('font-size', d => Math.max(7, Math.min(11, nodeSize(d) * 0.7)));
+    simulation.force('collision', d3.forceCollide().radius(d => nodeSize(d) + 4));
+    simulation.alpha(0.3).restart();
+  });
+});
+
+// Node card
+function showEmptyCard() {
+  document.getElementById('node-card').innerHTML = `<div class="node-card-empty"><p>Kliknij postać<br>aby zobaczyć<br>szczegóły</p></div>`;
+}
+
+function showNodeCard(d) {
+  const neighbors = adj[d.id].sort((a, b) => b.w - a.w).slice(0, 5);
+  const cname = manualNames[d.community] || `Społeczność ${d.community}`;
+  const ccolor = commColor(d.community);
+  document.getElementById('node-card').innerHTML = `
+    <div class="node-name">${d.id}</div>
+    <div class="community-tag" style="background:${ccolor}">${cname}</div>
+    ${metricBar('Stopień', d.degree, d.degNorm, d.degree.toFixed(0))}
+    ${metricBar('Pośrednictwo', d.betweenness, d.betNorm, d.betweenness.toFixed(4))}
+    ${metricBar('Bliskość', d.closeness, d.clNorm, d.closeness.toFixed(4))}
+    ${metricBar('PageRank', d.pagerank, d.prNorm, d.pagerank.toFixed(4))}
+    ${metricBar('Klasteryzacja', d.clustering, d.clustering, d.clustering.toFixed(3))}
+    <div class="connections-title">Najsilniejsze powiązania</div>
+    ${neighbors.map(nb => `<div class="conn-item"><span>${nb.v}</span><span class="conn-weight">×${nb.w}</span></div>`).join('')}
+  `;
+}
+
+function metricBar(label, val, norm, display) {
+  return `<div class="metric-row">
+    <div class="metric-label"><span>${label}</span><span>${display}</span></div>
+    <div class="metric-bar-bg"><div class="metric-bar-fill" style="width:${(norm * 100).toFixed(1)}%"></div></div>
+  </div>`;
+}
+
+// Legend
+function buildLegend() {
+  const container = document.getElementById('legend-items');
+  const comms = [...new Set(nodesData.map(d => d.community))].sort();
+  container.innerHTML = comms.map(c => {
+    const count = nodesData.filter(d => d.community === c).length;
+    const name = manualNames[c] || `Społeczność ${c}`;
+    return `<div class="legend-item" data-comm="${c}">
+      <div class="legend-dot" style="background:${commColors[c % commColors.length]}"></div>
+      <span class="legend-label">${name}</span>
+      <span class="legend-count">${count}</span>
+    </div>`;
+  }).join('');
+  container.querySelectorAll('.legend-item').forEach(item => {
+    item.addEventListener('click', function() {
+      const c = parseInt(this.dataset.comm);
+      filterComm = filterComm === c ? null : c;
+      container.querySelectorAll('.legend-item').forEach(i => i.classList.toggle('active', parseInt(i.dataset.comm) === filterComm));
+      buildRanking(currentRankTab, filterComm);
+    });
+  });
+}
+buildLegend();
+
+// Ranking
+let currentRankTab = 'degree';
+function buildRanking(tab, commFilter = null) {
+  currentRankTab = tab;
+  let data = [...nodesData];
+  if (commFilter !== null) data = data.filter(d => d.community === commFilter);
+  const key = tab === 'degree' ? 'degree' : tab === 'betweenness' ? 'betweenness' : tab === 'closeness' ? 'closeness' : 'pagerank';
+  const normKey = tab === 'degree' ? 'degNorm' : tab === 'betweenness' ? 'betNorm' : tab === 'closeness' ? 'clNorm' : 'prNorm';
+  data.sort((a, b) => b[key] - a[key]);
+  const top = data.slice(0, 15);
+  document.getElementById('rank-list').innerHTML = top.map((d, i) => `
+    <div class="rank-row" data-id="${d.id}">
+      <span class="rank-num">${i + 1}</span>
+      <div class="rank-dot" style="background:${commColor(d.community)}"></div>
+      <span class="rank-name">${d.id}</span>
+      <div class="rank-bar-wrap"><div class="rank-bar" style="width:${(d[normKey]*100).toFixed(0)}%"></div></div>
+      <span class="rank-val">${tab === 'degree' ? d[key].toFixed(0) : d[key].toFixed(3)}</span>
+    </div>
+  `).join('');
+  document.querySelectorAll('.rank-row').forEach(row => {
+    row.addEventListener('click', function() {
+      const id = this.dataset.id;
+      const d = nodeMap[id];
+      activeNodeId = id;
+      highlightNode(d);
+      showNodeCard(d);
+      // zoom to node
+      const svgEl = document.getElementById('graph-svg');
+      const w = svgEl.clientWidth, h = svgEl.clientHeight;
+      svg.transition().duration(600).call(
+        zoom.transform,
+        d3.zoomIdentity.translate(w/2, h/2).scale(1.5).translate(-d.x, -d.y)
+      );
+    });
+  });
+}
+buildRanking('degree');
+
+document.querySelectorAll('.rank-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.rank-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    buildRanking(this.dataset.rank, filterComm);
+  });
+});
+
+// Auto-fit after simulation settles
+setTimeout(() => {
+  simulation.alphaTarget(0).alpha(0.02).restart();
+  setTimeout(() => {
+    const svgEl = document.getElementById('graph-svg');
+    const w = svgEl.clientWidth, h = svgEl.clientHeight;
+    const xs = nodesData.map(d => d.x), ys = nodesData.map(d => d.y);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs);
+    const y0 = Math.min(...ys), y1 = Math.max(...ys);
+    const scale = 0.85 * Math.min(w / (x1 - x0 + 40), h / (y1 - y0 + 40));
+    const tx = w / 2 - scale * (x0 + x1) / 2;
+    const ty = h / 2 - scale * (y0 + y1) / 2;
+    svg.transition().duration(800).call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+  }, 1500);
+}, 2500);
+
+// ============================================================
+// INTERPRETATION
+// ============================================================
+document.getElementById('stat-grid').innerHTML = `
+  <div class="stat-box"><div class="sv">${n}</div><div class="sl">Węzły (postacie)</div></div>
+  <div class="stat-box"><div class="sv">${edges.length}</div><div class="sl">Krawędzie (relacje)</div></div>
+  <div class="stat-box"><div class="sv">${(density * 100).toFixed(1)}%</div><div class="sl">Gęstość sieci</div></div>
+  <div class="stat-box"><div class="sv">${numComm}</div><div class="sl">Społeczności</div></div>
+`;
+
+document.getElementById('interp-basic').innerHTML = `
+Sieć liczy <strong>${n} węzłów</strong> (postaci) i <strong>${edges.length} krawędzi</strong> (scen wspólnego współwystępowania). Gęstość wynosi <strong>${(density * 100).toFixed(2)}%</strong>, co przy tak licznych postaciach epizodycznych wskazuje na wyraźną <em>strukturę hub-and-spoke</em> — kilka centralnych postaci podtrzymuje całą tkankę narracyjną, otoczone peryferyjnymi grupami satelitarnymi. Tarantino celowo buduje światy narracyjne wokół intensywnych, gęstych lokalnych klastrów (plantacja, scena walki mandingos, oberża) spajanych przez nieliczne postacie-mosty.
+`;
+
+const top3deg = [...nodesData].sort((a, b) => b.degree - a.degree).slice(0, 3).map(d => `<strong>${d.id}</strong> (${d.degree})`).join(', ');
+const top3bet = [...nodesData].sort((a, b) => b.betweenness - a.betweenness).slice(0, 3).map(d => `<strong>${d.id}</strong> (${d.betweenness.toFixed(3)})`).join(', ');
+const top3cl = [...nodesData].sort((a, b) => b.closeness - a.closeness).slice(0, 3).map(d => `<strong>${d.id}</strong> (${d.closeness.toFixed(3)})`).join(', ');
+const top3pr = [...nodesData].sort((a, b) => b.pagerank - a.pagerank).slice(0, 3).map(d => `<strong>${d.id}</strong> (${d.pagerank.toFixed(4)})`).join(', ');
+
+document.getElementById('interp-centrality').innerHTML = `
+<p><strong>Stopień ważony</strong> — dominuje ${top3deg}. Django jako protagonista jest dosłownie <em>centrum grawitacyjnym całej sieci</em>: pojawia się w scenach z niemal każdą postacią. Calvin Candie, jako główny antagonista i właściciel Candyland, skupia wszystkie relacje drugoplanowe w obrębie plantacji.</p>
+<p><strong>Pośrednictwo (Betweenness)</strong> — liderzy: ${top3bet}. Wysoka wartość pośrednictwa Djanga oznacza, że <em>niemal każda informacja czy relacja w filmie "przechodzi przez niego"</em> fabularnie. Schultz jako mentor i partner Djanga pełni rolę brokera między dwoma światami: wolnych myśliwych nagród i zamkniętej kultury Południa. Bez Schulza Django nie dotarłby do Candyland — stąd jego kluczowe pośrednictwo strukturalne.</p>
+<p><strong>Bliskość (Closeness)</strong> — liderzy: ${top3cl}. Miary bliskości ujawniają, kto "najszybciej dociera" narracyjnie do wszystkich innych postaci. Dominacja tych samych aktorów potwierdza, że film ma wyraźny centrum — dystans do jakiejkolwiek sceny jest najkrótszy od protagonisty i jego antagonisty.</p>
+<p><strong>PageRank</strong> — liderzy: ${top3pr}. PageRank nagradza powiązania z postaciami mającymi wiele własnych połączeń. Wynik potwierdza hierarchię: Django i Candie są nie tylko licznymi hubami, ale są powiązani z innymi hubami — ich prestiż narracyjny jest wzajemnie wzmacniany.</p>
+`;
+
+document.getElementById('interp-communities').innerHTML = `
+<p>Algorytm wykrył <strong>${numComm} społeczności narracyjnych</strong>. Odpowiadają one przede wszystkim lokacjom i wątkom fabularnym: <em>świat Candyland</em> (Candie, Stephen, dworzanie plantacji — postacie tworzące hermetyczny mikrokosmos władzy), <em>świat łowców nagród</em> (Django, Schultz, Ace Speck — marginalizowane lub zbuntowane jednostki), <em>lokalne klastry epizodyczne</em> (walki mandingos, scena oberży, saloon). Podziały niemal idealnie odzwierciedlają <em>moralne obozy</em> Południa: oprawcy vs. więźniowie vs. nomadzi wolności.</p>
+<p>Postacie-pomosty między społecznościami to przede wszystkim <strong>Django</strong> (przenika wszystkie światy jako "czarny marszałek"), <strong>Broomhilda</strong> (łączy świat niewolników z motywacją protagonistów) oraz <strong>Stephen</strong> (stary lokaj Candiego, "zdrajca" własnej grupy — formalnie należy do społeczności Candyland, ale operacyjnie służy za łącznik wewnętrzny).</p>
+`;
+
+const highBetLowDeg = [...nodesData].filter(d => d.betNorm > 0.3 && d.degNorm < 0.2).map(d => d.id);
+document.getElementById('interp-anomalies').innerHTML = `
+<p><strong>Ukryte łączniki</strong> (wysokie betweenness, niski degree): ${highBetLowDeg.length > 0 ? highBetLowDeg.map(id => `<strong>${id}</strong>`).join(', ') : 'brak wyraźnych anomalii — sieć jest stosunkowo spójna hierarchicznie'}. Taka struktura wskazuje na "bramkarzy" narracyjnych — postacie nieliczne w scenach, lecz kluczowe dla spójności fabuły.</p>
+<p><strong>Izolowane klastry</strong> o bardzo wysokim clustering coefficient (BRADSHAW i jego gang, CHESTER i gladiatorzy, BELOW i jego kompania) tworzą <em>szczelnie zamknięte mikroświaty</em> — każdy zna każdego w grupie, ale ma minimalne powiązania z resztą sieci. To typowa struktura "świadków historii": Tarantino często wprowadza tłumy statystów tworzących tło epoki.</p>
+<p><strong>Artefakty skryptowe</strong> (KNEELING DJANGO, DJANGO SCREAMS, AND DJANGO, SHIRTLESS DJANGO) wskazują na duplikację węzłów wynikającą z parsowania kierunków scenariuszowych jako postaci — ciekawy ślad procesu ekstrakcji danych ze skryptu filmowego.</p>
+`;
+
+document.getElementById('interp-proposals').innerHTML = `
+  <li><strong>Analiza temporalna:</strong> podział scen na akty (Akt I: preryjny, Akt II: Candyland, Akt III: konfrontacja) i śledzenie, jak zmienia się centralność Djanga i Schulza w kolejnych segmentach — kiedy Django "przejmuje" narrację od mentora?</li>
+  <li><strong>Analiza płci i władzy:</strong> zmapowanie węzłów według płci i statusu (wolny/zniewolony) i obliczenie, czy istnieje korelacja między tym statusem a centralnością — formalny pomiar narracyjnej marginalizacji.</li>
+  <li><strong>Sieć dialogów vs. sieć współwystępowania:</strong> przebudowanie grafu tylko na podstawie bezpośrednich rozmów (nie samej obecności w scenie) — kto naprawdę "mówi do kogo" vs. kto tylko współdzieli przestrzeń?</li>
+  <li><strong>Porównanie intertekstualne:</strong> zestawienie tej sieci z siecią postaci Bękartów Wojny lub Nienawistnej Ósemki Tarantino — czy filmy Tarantino mają wspólny "podpis topologiczny" (np. zawsze jeden mega-hub + klastry zamknięte)?</li>
+  <li><strong>Śledzenie mostów narracyjnych:</strong> weryfikacja, czy krawędzie zidentyfikowane jako mosty strukturalne odpowiadają momentom zwrotnym fabuły (np. sceny przełomu między Akt I a II) — test hipotezy o narracyjnej funkcji struktur sieciowych.</li>
+`;
+</script>
+</body>
+</html>

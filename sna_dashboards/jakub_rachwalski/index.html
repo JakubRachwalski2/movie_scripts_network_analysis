@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Django Unchained — Analiza Dialogowa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Special+Elite&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+  :root {
+    --bg:        #0e0b07;
+    --dust:      #1c1408;
+    --parchment: #c9a96e;
+    --rust:      #8b2e0e;
+    --sand:      #d4a853;
+    --bone:      #e8d9b0;
+    --ash:       #6b6050;
+    --male:      #c47a1e;
+    --female:    #6b1a0e;
+    --text:      #d8c89a;
+    --dim:       #7a6a4a;
+    --font-display: 'Playfair Display', serif;
+    --font-body: 'Special Elite', cursive;
+    --slide-w: 100vw;
+    --slide-h: 100vh;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  /* ── SLIDE SYSTEM ── */
+  #deck { position: relative; width: 100vw; height: 100vh; }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .45s ease;
+    overflow: hidden;
+  }
+  .slide.active { opacity: 1; pointer-events: all; }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: .6;
+  }
+
+  /* ── NAVIGATION ── */
+  #nav {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 1000;
+    background: rgba(14,11,7,.75);
+    border: 1px solid var(--ash);
+    padding: 10px 22px;
+    backdrop-filter: blur(4px);
+  }
+  .nav-btn {
+    background: none;
+    border: none;
+    color: var(--parchment);
+    font-size: 22px;
+    cursor: pointer;
+    line-height: 1;
+    transition: color .2s;
+    font-family: var(--font-body);
+  }
+  .nav-btn:hover { color: var(--sand); }
+  .nav-btn:disabled { color: var(--ash); cursor: default; }
+  #progress {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--dim);
+    letter-spacing: 2px;
+    min-width: 48px;
+    text-align: center;
+  }
+
+  /* ═══════════════════════════════════════
+     SLIDE 1 — TITLE
+  ═══════════════════════════════════════ */
+  #slide1 {
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 50%, #1c1005 0%, var(--bg) 70%),
+      linear-gradient(175deg, #0e0b07 0%, #1c1005 100%);
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  /* Bullet-hole decorations */
+  .bullet-hole {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--bg);
+    box-shadow: 0 0 0 2px #3a2a0a, 0 0 8px 4px rgba(0,0,0,.6);
+  }
+
+  .s1-eyebrow {
+    font-family: var(--font-body);
+    font-size: 13px;
+    letter-spacing: 6px;
+    color: var(--rust);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .s1-title {
+    font-family: var(--font-display);
+    font-size: clamp(64px, 10vw, 130px);
+    font-weight: 900;
+    line-height: .92;
+    color: var(--sand);
+    text-shadow: 4px 4px 0 #3a1a04, 8px 8px 20px rgba(0,0,0,.8);
+    letter-spacing: -2px;
+    margin-bottom: 8px;
+  }
+  .s1-title em {
+    font-style: italic;
+    color: var(--rust);
+  }
+  .s1-unchained {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4.5vw, 56px);
+    font-weight: 700;
+    font-style: italic;
+    color: var(--parchment);
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+  }
+  .s1-divider {
+    width: 200px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--rust), transparent);
+    margin: 0 auto 40px;
+  }
+  .s1-subtitle {
+    font-family: var(--font-body);
+    font-size: clamp(14px, 2vw, 20px);
+    color: var(--bone);
+    letter-spacing: 3px;
+    margin-bottom: 56px;
+    line-height: 1.6;
+  }
+  .s1-footer {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--ash);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    position: absolute;
+    bottom: 72px;
+  }
+
+  /* ═══════════════════════════════════════
+     SLIDE COMMON LAYOUT
+  ═══════════════════════════════════════ */
+  .slide-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 36px 60px 90px;
+  }
+  .slide-header {
+    flex-shrink: 0;
+    margin-bottom: 16px;
+  }
+  .slide-num {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--rust);
+    letter-spacing: 4px;
+    margin-bottom: 6px;
+  }
+  .slide-title {
+    font-family: var(--font-display);
+    font-size: clamp(26px, 3.5vw, 44px);
+    font-weight: 700;
+    color: var(--sand);
+    line-height: 1.1;
+  }
+  .slide-rule {
+    height: 1px;
+    background: linear-gradient(90deg, var(--rust), transparent);
+    margin: 12px 0 8px;
+  }
+  .slide-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .slide-note {
+    flex-shrink: 0;
+    font-size: 11px;
+    color: var(--dim);
+    line-height: 1.6;
+    letter-spacing: .5px;
+    max-width: 900px;
+    margin-top: 10px;
+    border-left: 2px solid var(--rust);
+    padding-left: 10px;
+  }
+
+  /* ═══════════════════════════════════════
+     SLIDE 2 — WHO SPEAKS
+  ═══════════════════════════════════════ */
+  #slide2 {
+    background: linear-gradient(160deg, #0e0b07 60%, #140e05 100%);
+  }
+  .gender-summary {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--bone);
+    letter-spacing: 1px;
+    margin: 8px 0 6px;
+  }
+  .gender-summary span.male { color: var(--male); font-weight: bold; }
+  .gender-summary span.female { color: var(--female); font-weight: bold; }
+
+  #chart-speakers {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  /* ═══════════════════════════════════════
+     SLIDE 3 — EMOTION ARC
+  ═══════════════════════════════════════ */
+  #slide3 {
+    background: linear-gradient(170deg, #0e0b07 50%, #12090a 100%);
+  }
+  #chart-arc { flex: 1; min-height: 0; width: 100%; }
+  .arc-question {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(16px, 2vw, 22px);
+    color: var(--parchment);
+    margin-bottom: 8px;
+  }
+
+  /* ═══════════════════════════════════════
+     SLIDE 4 — EMOTIONS × GENDER
+  ═══════════════════════════════════════ */
+  #slide4 {
+    background: linear-gradient(165deg, #0e0b07 60%, #100b0a 100%);
+  }
+  #chart-emotions { flex: 1; min-height: 0; width: 100%; }
+  .emotion-legend {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--dim);
+    margin: 6px 0;
+    letter-spacing: .5px;
+  }
+  .emotion-legend span { display: flex; align-items: center; gap: 6px; }
+  .emotion-legend .dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+  }
+
+  /* ═══════════════════════════════════════
+     SLIDE 5 — NETWORK
+  ═══════════════════════════════════════ */
+  #slide5 {
+    background: #0a0805;
+  }
+  #chart-network { flex: 1; min-height: 0; width: 100%; position: relative; }
+  #network-svg { width: 100%; height: 100%; }
+  #node-card {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: rgba(14,11,7,.92);
+    border: 1px solid var(--rust);
+    padding: 14px 18px;
+    font-size: 12px;
+    color: var(--bone);
+    line-height: 1.8;
+    min-width: 200px;
+    display: none;
+  }
+  #node-card h4 {
+    font-family: var(--font-display);
+    color: var(--sand);
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+  .net-legend {
+    display: flex;
+    gap: 24px;
+    font-size: 11px;
+    color: var(--dim);
+    margin-top: 6px;
+    letter-spacing: .5px;
+  }
+  .net-legend span { display: flex; align-items: center; gap: 6px; }
+  .net-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  /* ═══════════════════════════════════════
+     SLIDE 6 — INTERPRETATION
+  ═══════════════════════════════════════ */
+  #slide6 {
+    background: linear-gradient(160deg, #0e0b07 60%, #0e0a05 100%);
+    overflow-y: hidden;
+  }
+  .interp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 32px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--rust) transparent;
+  }
+  .interp-grid::-webkit-scrollbar { width: 4px; }
+  .interp-grid::-webkit-scrollbar-thumb { background: var(--rust); }
+  .interp-section {
+    border-left: 3px solid var(--rust);
+    padding: 10px 14px;
+    background: rgba(255,255,255,.02);
+  }
+  .interp-section.full { grid-column: 1 / -1; }
+  .interp-section h3 {
+    font-family: var(--font-display);
+    font-size: 14px;
+    color: var(--sand);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  .interp-section p, .interp-section li {
+    font-size: 12px;
+    line-height: 1.75;
+    color: var(--text);
+  }
+  .interp-section ul {
+    padding-left: 16px;
+    margin-top: 4px;
+  }
+  .interp-section li { margin-bottom: 4px; }
+  em.hi { color: var(--sand); font-style: normal; font-weight: bold; }
+
+  /* ── D3 SHARED ── */
+  .axis text { fill: var(--dim); font-family: var(--font-body); font-size: 11px; }
+  .axis path, .axis line { stroke: var(--ash); }
+  .tooltip-box {
+    position: absolute;
+    background: rgba(14,11,7,.9);
+    border: 1px solid var(--rust);
+    color: var(--bone);
+    font-family: var(--font-body);
+    font-size: 12px;
+    padding: 8px 12px;
+    pointer-events: none;
+    display: none;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<div id="deck">
+
+  <!-- ══════════════════ SLIDE 1 ══════════════════ -->
+  <div class="slide active" id="slide1">
+    <!-- decorative bullet holes -->
+    <div class="bullet-hole" style="width:18px;height:18px;top:12%;left:8%;"></div>
+    <div class="bullet-hole" style="width:11px;height:11px;top:22%;left:91%;"></div>
+    <div class="bullet-hole" style="width:14px;height:14px;top:78%;left:6%;"></div>
+    <div class="bullet-hole" style="width:9px;height:9px;top:65%;left:88%;"></div>
+    <div class="bullet-hole" style="width:20px;height:20px;top:40%;left:3%;"></div>
+    <div class="bullet-hole" style="width:12px;height:12px;top:85%;left:80%;"></div>
+
+    <div class="s1-eyebrow">Quentin Tarantino · 2012</div>
+    <div class="s1-title">DJANGO</div>
+    <div class="s1-unchained">Unchained</div>
+    <div class="s1-divider"></div>
+    <div class="s1-subtitle">
+      Głos &middot; Płeć &middot; Emocje<br>
+      Analiza Dialogowa Scenariusza
+    </div>
+    <div class="s1-footer">Humanistyka Cyfrowa &nbsp;·&nbsp; Character Network Analysis</div>
+  </div>
+
+  <!-- ══════════════════ SLIDE 2 ══════════════════ -->
+  <div class="slide" id="slide2">
+    <div class="slide-inner">
+      <div class="slide-header">
+        <div class="slide-num">02 / 06</div>
+        <div class="slide-title">Kto mówi?</div>
+        <div class="slide-rule"></div>
+        <div class="gender-summary">
+          <span class="male">95,9%</span> dialogu wypowiadają postacie męskie &nbsp;|&nbsp;
+          <span class="female">4,1%</span> — postacie kobiece
+        </div>
+      </div>
+      <div class="slide-body">
+        <div id="chart-speakers"></div>
+        <div class="slide-note">
+          Udział w dialogu (mierzony liczbą słów) rejestruje ilościową obecność postaci w przestrzeni diegetycznej — nie jej sprawczość fabularną ani znaczenie symboliczne. Postać wypowiadająca wiele słów jest słyszalna, lecz niekoniecznie decyzyjna. Odwrotnie: postać milcząca może być tą, wokół której obraca się cały scenariusz.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE 3 ══════════════════ -->
+  <div class="slide" id="slide3">
+    <div class="slide-inner">
+      <div class="slide-header">
+        <div class="slide-num">03 / 06</div>
+        <div class="slide-title">Łuk emocjonalny</div>
+        <div class="slide-rule"></div>
+        <div class="arc-question">Jaki kształt emocjonalny ma ta historia?</div>
+      </div>
+      <div class="slide-body">
+        <div id="chart-arc"></div>
+        <div class="slide-note">
+          Pojęcie „kształtu historii" (ang. <em>story shape</em>) pochodzi od Kurta Vonneguta, który jako pierwszy mapował trajektorie narracyjne na osiach czasu i szczęścia. Reagan i in. (2016) potwierdzili komputacyjnie istnienie kilku archetypicznych wzorców — m.in. „fall" (upadek), „rise" (odrodzenie) i „man in a hole" (zejście w dół, następnie wyjście). Wygładzona walencja (rolling average) redukuje szum pojedynczych scen, ukazując makrostrukturę emocjonalną.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE 4 ══════════════════ -->
+  <div class="slide" id="slide4">
+    <div class="slide-inner">
+      <div class="slide-header">
+        <div class="slide-num">04 / 06</div>
+        <div class="slide-title">Emocje × Płeć</div>
+        <div class="slide-rule"></div>
+        <div class="emotion-legend" id="emotion-legend"></div>
+      </div>
+      <div class="slide-body">
+        <div id="chart-emotions"></div>
+        <div class="slide-note">
+          Emocja przypisana przez model językowy (NLP) to interpretacja tekstu kwestii, nie subiektywne odczucie postaci. Modele uczą się rozkładów emocji z korpusów ludzkich anotacji — co oznacza, że reprodukują kulturowe konwencje powiązania słów z afektem. Wyniki należy traktować jako sygnał statystyczny, nie diagnozę psychologiczną.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE 5 ══════════════════ -->
+  <div class="slide" id="slide5">
+    <div class="slide-inner" style="padding-bottom: 80px;">
+      <div class="slide-header">
+        <div class="slide-num">05 / 06</div>
+        <div class="slide-title">Sieć postaci</div>
+        <div class="slide-rule"></div>
+        <div class="net-legend">
+          <span><div class="net-dot" style="background:var(--male)"></div> Mężczyzna</span>
+          <span><div class="net-dot" style="background:var(--female)"></div> Kobieta</span>
+          <span><div class="net-dot" style="background:var(--ash)"></div> Nieokreślona</span>
+          <span style="margin-left:8px;color:var(--dim);">Rozmiar węzła = liczba słów &nbsp;|&nbsp; Grubość krawędzi = wspólne sceny</span>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div id="chart-network">
+          <svg id="network-svg"></svg>
+          <div id="node-card"></div>
+          <div class="tooltip-box" id="net-tooltip"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE 6 ══════════════════ -->
+  <div class="slide" id="slide6">
+    <div class="slide-inner">
+      <div class="slide-header">
+        <div class="slide-num">06 / 06</div>
+        <div class="slide-title">Interpretacja humanistyczna</div>
+        <div class="slide-rule"></div>
+      </div>
+      <div class="slide-body">
+        <div class="interp-grid">
+
+          <div class="interp-section">
+            <h3>6.1 &nbsp; Głos i reprezentacja</h3>
+            <p>Scenariusz Django Unchained jest <em class="hi">niemal wyłącznie głosem mężczyzn</em>: 95,9% wszystkich słów wypowiadają postacie płci męskiej. Kobiety — Broomhilda, Lara Lee, Betina — łącznie dysponują zaledwie <em class="hi">4,1%</em> przestrzeni dialogowej. To nie tyle pominięcie, co świadomy zabieg narracyjny: film osadzony w świecie plantatorskiego Południa konstruuje przestrzeń władzy jako przestrzeń głosów białych i czarnych mężczyzn. Broomhilda, choć centralny motyw napędowy fabuły, jest postacią <em class="hi">pożądaną i odzyskiwaną</em>, nie mówiącą i działającą. Film koncentruje głos, by zilustrować, kto w tej epoce posiadał sprawczość — i kto był jej pozbawiony.</p>
+          </div>
+
+          <div class="interp-section">
+            <h3>6.2 &nbsp; Kształt emocjonalny</h3>
+            <p>Łuk emocjonalny odpowiada archetypowi <em class="hi">„man in a hole"</em> z wyraźnie przesunięciem: film rozpoczyna się w negatywnej walencji (sceny 1–15: ciemność, zniewolenie, przemoc), osiąga tymczasowe ożywienie w aktach II–III (sceny 16–29: budowanie sojuszu, nadzieja, komedia), a następnie gwałtownie spada w akcie IV (sceny 40–55: katastrofa w Candyland, śmierć Schulza, pojmanie Django). Finał (sceny 60–71) przynosi <em class="hi">niejednoznaczną ameliorację</em> — walencja rośnie, lecz nigdy nie osiąga jednoznacznego pozytywu. To trajektoria rewanżu, nie triumfu.</p>
+          </div>
+
+          <div class="interp-section">
+            <h3>6.3 &nbsp; Emocje a płeć</h3>
+            <p>Dane potwierdzają częściowo stereotypy emocjonalne, a jednocześnie im przeczą. Złość dominuje u mężczyzn (<em class="hi">26,4% vs 8,5%</em> u kobiet) — co odpowiada konwencji agresywnego, gwałtownego Południa reprezentowanego przez Calvina Candiego i Stephena. Smutek natomiast jest wyraźnie wyższy u kobiet (<em class="hi">14,1% vs 7,0%</em>), co może reprodukować kliszę kobiety jako figury cierpienia. Zaskakujące: strach jest wyższy u kobiet (8,5%) niż u mężczyzn (3,3%), co interpretacyjnie spójne jest z pozycją Broomhildy jako postaci uwięzionej, pozbawionej sprawczości.</p>
+          </div>
+
+          <div class="interp-section">
+            <h3>6.4 &nbsp; Sieć a głos</h3>
+            <p>Django jest zarówno węzłem centralnym w sieci (<em class="hi">60+ krawędzi</em>), jak i drugą postacią pod względem liczby słów (3 925). Jednak Dr. Schultz mówi więcej (4 118 słów) przy znacznie mniejszej liczbie połączeń sieciowych — co ujawnia jego rolę jako <em class="hi">narratora i architekta</em> intrygi (wysoka werbalność) vs. Django jako <em class="hi">osi relacji społecznych</em> (wysoka centralność). Struktura sieci potwierdza, że Django jest tytułowym bohaterem nie dlatego, że mówi najwięcej, ale dlatego, że wszyscy wokół niego grawitują.</p>
+          </div>
+
+          <div class="interp-section full">
+            <h3>6.5 &nbsp; Propozycje dalszych analiz</h3>
+            <ul>
+              <li><strong>Temporalna analiza władzy werbalnej:</strong> Jak zmienia się udział Schulza vs. Django w dialogu w kolejnych aktach? Czy Django „przejmuje głos" po śmierci mentora?</li>
+              <li><strong>Analiza przerwań i reaktywności:</strong> Kto inicjuje sekwencje dialogowe, a kto wyłącznie odpowiada? Czy Broomhilda jest kiedykolwiek inicjatorem rozmowy?</li>
+              <li><strong>Emocje a rasa i władza:</strong> Czy złość Calvina Candiego ma inną walencję leksykalną niż złość Stephena? Czy model NLP różnicuje moc polityczną wypowiedzi?</li>
+              <li><strong>Porównanie z Django Unchained — inne adaptacje i rebooty „westernów wyzwolenia":</strong> Jak struktura głosowa scenariusza Tarantino wpisuje się w tradycję gatunkową i jak ją przekształca?</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- #deck -->
+
+<!-- Navigation -->
+<div id="nav">
+  <button class="nav-btn" id="btn-prev" disabled>&#9664;</button>
+  <div id="progress">1 / 6</div>
+  <button class="nav-btn" id="btn-next">&#9654;</button>
+</div>
+
+<div class="tooltip-box" id="tooltip"></div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════ */
+const TOP_SPEAKERS = [
+  {name:"DR. SCHULTZ",gender:"M",word_count:4118,pct_of_total:21.92},
+  {name:"DJANGO",gender:"M",word_count:3925,pct_of_total:20.9},
+  {name:"CALVIN CANDIE",gender:"M",word_count:3451,pct_of_total:18.37},
+  {name:"STEPHEN",gender:"M",word_count:1943,pct_of_total:10.34},
+  {name:"ACE WOODY",gender:"M",word_count:1105,pct_of_total:5.88},
+  {name:"SCOTTY",gender:"M",word_count:399,pct_of_total:2.12},
+  {name:"ROY",gender:"M",word_count:349,pct_of_total:1.86},
+  {name:"BROOMHILDA",gender:"K",word_count:338,pct_of_total:1.8},
+  {name:"SPENCER",gender:"M",word_count:285,pct_of_total:1.52},
+  {name:"SPENCER BENNETT",gender:"M",word_count:259,pct_of_total:1.38},
+  {name:"CALVIN CANDLE",gender:"M",word_count:246,pct_of_total:1.31},
+  {name:"MOGUY",gender:"M",word_count:206,pct_of_total:1.1},
+  {name:"TIMMY",gender:"M",word_count:201,pct_of_total:1.07},
+  {name:"JANO",gender:"M",word_count:191,pct_of_total:1.02},
+  {name:"LARA LEE",gender:"K",word_count:187,pct_of_total:1.0}
+];
+
+const SPEECH_BY_GENDER = {K:{total_words:770,pct:4.1},M:{total_words:18014,pct:95.9}};
+
+const EMOTION_ARC = [
+  {scene:1,rolling_valence:-0.133},{scene:2,rolling_valence:-0.237},{scene:3,rolling_valence:-0.21},
+  {scene:4,rolling_valence:-0.197},{scene:5,rolling_valence:-0.308},{scene:6,rolling_valence:-0.311},
+  {scene:7,rolling_valence:-0.267},{scene:8,rolling_valence:-0.267},{scene:9,rolling_valence:-0.234},
+  {scene:10,rolling_valence:-0.162},{scene:11,rolling_valence:-0.194},{scene:12,rolling_valence:-0.169},
+  {scene:13,rolling_valence:-0.198},{scene:14,rolling_valence:-0.181},{scene:15,rolling_valence:-0.083},
+  {scene:16,rolling_valence:0.036},{scene:17,rolling_valence:0.084},{scene:18,rolling_valence:0.17},
+  {scene:19,rolling_valence:0.133},{scene:22,rolling_valence:-0.029},{scene:23,rolling_valence:-0.041},
+  {scene:24,rolling_valence:0.051},{scene:27,rolling_valence:0.072},{scene:28,rolling_valence:-0.008},
+  {scene:29,rolling_valence:0.084},{scene:30,rolling_valence:0.014},{scene:31,rolling_valence:-0.056},
+  {scene:32,rolling_valence:-0.164},{scene:33,rolling_valence:-0.078},{scene:36,rolling_valence:-0.078},
+  {scene:37,rolling_valence:0.005},{scene:38,rolling_valence:-0.034},{scene:39,rolling_valence:-0.027},
+  {scene:40,rolling_valence:-0.104},{scene:41,rolling_valence:-0.135},{scene:42,rolling_valence:-0.259},
+  {scene:44,rolling_valence:-0.2},{scene:46,rolling_valence:-0.169},{scene:47,rolling_valence:-0.117},
+  {scene:48,rolling_valence:-0.167},{scene:49,rolling_valence:-0.153},{scene:50,rolling_valence:-0.274},
+  {scene:51,rolling_valence:-0.32},{scene:52,rolling_valence:-0.379},{scene:53,rolling_valence:-0.379},
+  {scene:54,rolling_valence:-0.333},{scene:55,rolling_valence:-0.262},{scene:56,rolling_valence:-0.165},
+  {scene:60,rolling_valence:-0.106},{scene:61,rolling_valence:-0.004},{scene:62,rolling_valence:-0.048},
+  {scene:64,rolling_valence:-0.08},{scene:65,rolling_valence:-0.244},{scene:66,rolling_valence:-0.22},
+  {scene:68,rolling_valence:-0.245},{scene:70,rolling_valence:-0.218},{scene:71,rolling_valence:-0.238}
+];
+
+const EMOTION_BY_GENDER = {
+  K:{radość:15.49,smutek:14.08,złość:8.45,strach:8.45,zaskoczenie:0.0,neutralna:53.52},
+  M:{radość:14.97,smutek:6.96,złość:26.4,strach:3.33,zaskoczenie:1.35,neutralna:46.99}
+};
+
+const NET_NODES = [
+  {id:"DJANGO",gender:"M",word_count:3925,scene_count:33,dominant_emotion:"neutralna",avg_valence:-0.0779},
+  {id:"DR. SCHULTZ",gender:"M",word_count:4118,scene_count:35,dominant_emotion:"neutralna",avg_valence:-0.0357},
+  {id:"CALVIN CANDIE",gender:"M",word_count:3451,scene_count:10,dominant_emotion:"neutralna",avg_valence:-0.2795},
+  {id:"STEPHEN",gender:"M",word_count:1943,scene_count:7,dominant_emotion:"neutralna",avg_valence:-0.3533},
+  {id:"ACE WOODY",gender:"M",word_count:1105,scene_count:4,dominant_emotion:"neutralna",avg_valence:-0.3578},
+  {id:"BROOMHILDA",gender:"K",word_count:338,scene_count:9,dominant_emotion:"neutralna",avg_valence:-0.1917},
+  {id:"MOGUY",gender:"M",word_count:206,scene_count:5,dominant_emotion:"neutralna",avg_valence:0.3438},
+  {id:"SCOTTY",gender:"M",word_count:399,scene_count:2,dominant_emotion:"radość",avg_valence:-0.02},
+  {id:"ROY",gender:"M",word_count:349,scene_count:2,dominant_emotion:"złość",avg_valence:-0.4391},
+  {id:"SPENCER",gender:"M",word_count:285,scene_count:4,dominant_emotion:"złość",avg_valence:-0.279},
+  {id:"SPENCER BENNETT",gender:"M",word_count:259,scene_count:3,dominant_emotion:"złość",avg_valence:-0.72},
+  {id:"LARA LEE",gender:"K",word_count:187,scene_count:6,dominant_emotion:"neutralna",avg_valence:0.0909},
+  {id:"TIMMY",gender:"M",word_count:201,scene_count:4,dominant_emotion:"radość",avg_valence:-0.025},
+  {id:"JANO",gender:"M",word_count:191,scene_count:2,dominant_emotion:"neutralna",avg_valence:-0.215},
+  {id:"CALVIN CANDLE",gender:"M",word_count:246,scene_count:6,dominant_emotion:"neutralna",avg_valence:-0.3308},
+  {id:"BETINA",gender:"K",word_count:177,scene_count:3,dominant_emotion:"neutralna",avg_valence:-0.0294},
+  {id:"RODNEY",gender:"M",word_count:75,scene_count:3,dominant_emotion:"neutralna",avg_valence:-0.025},
+  {id:"MARSHALL TATUM",gender:"M",word_count:113,scene_count:3,dominant_emotion:"złość",avg_valence:-0.3571},
+  {id:"FLOYD",gender:"M",word_count:150,scene_count:2,dominant_emotion:"neutralna",avg_valence:-0.1833},
+  {id:"CHESTER",gender:"M",word_count:22,scene_count:2,dominant_emotion:"neutralna",avg_valence:-0.1333},
+  {id:"CHICKEN CHARLY",gender:"M",word_count:25,scene_count:2,dominant_emotion:"neutralna",avg_valence:-0.275},
+  {id:"LITTLE RAJ",gender:"M",word_count:43,scene_count:2,dominant_emotion:"neutralna",avg_valence:-0.5},
+  {id:"BILLY CRASH",gender:"M",word_count:51,scene_count:2,dominant_emotion:"neutralna",avg_valence:-0.15},
+  {id:"NARRATOR",gender:"?",word_count:0,scene_count:0,dominant_emotion:"neutralna",avg_valence:0.0583},
+  {id:"DICKY SPECK",gender:"M",word_count:45,scene_count:1,dominant_emotion:"neutralna",avg_valence:-0.4375},
+  {id:"ACE SPECK",gender:"M",word_count:39,scene_count:1,dominant_emotion:"złość",avg_valence:-0.375},
+  {id:"CLEO",gender:"K",word_count:28,scene_count:1,dominant_emotion:"neutralna",avg_valence:0.0},
+  {id:"BENNETT",gender:"M",word_count:71,scene_count:1,dominant_emotion:"złość",avg_valence:-1.0},
+  {id:"BROWN",gender:"M",word_count:48,scene_count:1,dominant_emotion:"strach",avg_valence:-0.5},
+  {id:"CORA",gender:"K",word_count:12,scene_count:1,dominant_emotion:"radość",avg_valence:0.3},
+  {id:"MARSHA",gender:"K",word_count:19,scene_count:1,dominant_emotion:"neutralna",avg_valence:0.0}
+];
+
+const NET_EDGES_RAW = [
+  {source:"DJANGO",target:"CALVIN CANDIE",weight:5},
+  {source:"DJANGO",target:"STEPHEN",weight:5},
+  {source:"DJANGO",target:"MOGUY",weight:5},
+  {source:"DJANGO",target:"ACE WOODY",weight:4},
+  {source:"DJANGO",target:"LARA LEE",weight:4},
+  {source:"DJANGO",target:"TIMMY",weight:4},
+  {source:"DJANGO",target:"BROOMHILDA",weight:4},
+  {source:"DJANGO",target:"SPENCER",weight:3},
+  {source:"DJANGO",target:"RODNEY",weight:3},
+  {source:"DJANGO",target:"ROY",weight:3},
+  {source:"DJANGO",target:"BETINA",weight:2},
+  {source:"DJANGO",target:"LITTLE RAJ",weight:2},
+  {source:"DJANGO",target:"CALVIN CANDLE",weight:2},
+  {source:"DJANGO",target:"CHESTER",weight:2},
+  {source:"DJANGO",target:"CHICKEN CHARLY",weight:2},
+  {source:"DJANGO",target:"FLOYD",weight:2},
+  {source:"DJANGO",target:"JANO",weight:2},
+  {source:"DJANGO",target:"SPENCER BENNETT",weight:1},
+  {source:"DJANGO",target:"MARSHALL TATUM",weight:1},
+  {source:"DJANGO",target:"BENNETT",weight:1},
+  {source:"DJANGO",target:"BILLY CRASH",weight:1},
+  {source:"DJANGO",target:"DICKY SPECK",weight:1},
+  {source:"DJANGO",target:"ACE SPECK",weight:1},
+  {source:"DJANGO",target:"BROWN",weight:1},
+  {source:"DJANGO",target:"COCO",weight:1},
+  {source:"DJANGO",target:"NARRATOR",weight:1},
+  {source:"MOGUY",target:"CALVIN CANDIE",weight:4},
+  {source:"MOGUY",target:"LARA LEE",weight:2},
+  {source:"MOGUY",target:"STEPHEN",weight:2},
+  {source:"MOGUY",target:"ACE WOODY",weight:1},
+  {source:"MOGUY",target:"TIMMY",weight:1},
+  {source:"MOGUY",target:"BROOMHILDA",weight:1},
+  {source:"MOGUY",target:"CALVIN CANDLE",weight:1},
+  {source:"CALVIN CANDIE",target:"CALVIN CANDLE",weight:5},
+  {source:"CALVIN CANDIE",target:"STEPHEN",weight:4},
+  {source:"CALVIN CANDIE",target:"LARA LEE",weight:3},
+  {source:"CALVIN CANDIE",target:"ACE WOODY",weight:1},
+  {source:"CALVIN CANDIE",target:"TIMMY",weight:1},
+  {source:"CALVIN CANDIE",target:"BROOMHILDA",weight:1},
+  {source:"CALVIN CANDIE",target:"SCOTTY",weight:1},
+  {source:"CALVIN CANDIE",target:"BILLY CRASH",weight:1},
+  {source:"CALVIN CANDIE",target:"RODNEY",weight:1},
+  {source:"CALVIN CANDLE",target:"STEPHEN",weight:3},
+  {source:"CALVIN CANDLE",target:"LARA LEE",weight:2},
+  {source:"CALVIN CANDLE",target:"ACE WOODY",weight:1},
+  {source:"CALVIN CANDLE",target:"TIMMY",weight:1},
+  {source:"CALVIN CANDLE",target:"BILLY CRASH",weight:1},
+  {source:"CALVIN CANDLE",target:"RODNEY",weight:1},
+  {source:"STEPHEN",target:"LARA LEE",weight:3},
+  {source:"STEPHEN",target:"BROOMHILDA",weight:3},
+  {source:"STEPHEN",target:"ACE WOODY",weight:2},
+  {source:"STEPHEN",target:"TIMMY",weight:2},
+  {source:"ACE WOODY",target:"LARA LEE",weight:2},
+  {source:"ACE WOODY",target:"TIMMY",weight:2},
+  {source:"ACE WOODY",target:"CHESTER",weight:1},
+  {source:"ACE WOODY",target:"CHICKEN CHARLY",weight:1},
+  {source:"ACE WOODY",target:"FLOYD",weight:1},
+  {source:"ACE WOODY",target:"JANO",weight:1},
+  {source:"ACE WOODY",target:"RODNEY",weight:1},
+  {source:"ACE WOODY",target:"ROY",weight:1},
+  {source:"ACE WOODY",target:"BROOMHILDA",weight:1},
+  {source:"ACE WOODY",target:"BROWN",weight:1},
+  {source:"LARA LEE",target:"BROOMHILDA",weight:3},
+  {source:"LARA LEE",target:"TIMMY",weight:1},
+  {source:"LARA LEE",target:"CHESTER",weight:1},
+  {source:"LARA LEE",target:"CHICKEN CHARLY",weight:1},
+  {source:"LARA LEE",target:"FLOYD",weight:1},
+  {source:"LARA LEE",target:"RODNEY",weight:1},
+  {source:"LARA LEE",target:"ROY",weight:1},
+  {source:"LARA LEE",target:"CORA",weight:1},
+  {source:"SPENCER",target:"SPENCER BENNETT",weight:3},
+  {source:"SPENCER",target:"BETINA",weight:2},
+  {source:"SPENCER",target:"LITTLE RAJ",weight:2},
+  {source:"SPENCER",target:"BENNETT",weight:1},
+  {source:"SPENCER BENNETT",target:"BETINA",weight:1},
+  {source:"BROOMHILDA",target:"NARRATOR",weight:2},
+  {source:"BROOMHILDA",target:"SCOTTY",weight:1},
+  {source:"BROOMHILDA",target:"BILLY CRASH",weight:1},
+  {source:"RODNEY",target:"CHESTER",weight:2},
+  {source:"RODNEY",target:"CHICKEN CHARLY",weight:2},
+  {source:"RODNEY",target:"FLOYD",weight:2},
+  {source:"RODNEY",target:"ROY",weight:2},
+  {source:"RODNEY",target:"JANO",weight:1},
+  {source:"ROY",target:"CHESTER",weight:2},
+  {source:"ROY",target:"CHICKEN CHARLY",weight:2},
+  {source:"ROY",target:"FLOYD",weight:2},
+  {source:"ROY",target:"JANO",weight:2},
+  {source:"CHESTER",target:"CHICKEN CHARLY",weight:2},
+  {source:"CHESTER",target:"FLOYD",weight:2},
+  {source:"CHESTER",target:"JANO",weight:1},
+  {source:"CHICKEN CHARLY",target:"FLOYD",weight:2},
+  {source:"CHICKEN CHARLY",target:"JANO",weight:1},
+  {source:"FLOYD",target:"JANO",weight:1},
+  {source:"NARRATOR",target:"SCOTTY",weight:2}
+];
+
+/* ═══════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════ */
+const slides = document.querySelectorAll('.slide');
+const totalSlides = slides.length;
+let current = 0;
+const btnPrev = document.getElementById('btn-prev');
+const btnNext = document.getElementById('btn-next');
+const progress = document.getElementById('progress');
+
+function goTo(idx) {
+  slides[current].classList.remove('active');
+  current = Math.max(0, Math.min(idx, totalSlides - 1));
+  slides[current].classList.add('active');
+  progress.textContent = `${current+1} / ${totalSlides}`;
+  btnPrev.disabled = current === 0;
+  btnNext.disabled = current === totalSlides - 1;
+  if (current === 1) drawSpeakers();
+  if (current === 2) drawArc();
+  if (current === 3) drawEmotions();
+  if (current === 4) drawNetwork();
+}
+
+btnPrev.addEventListener('click', () => goTo(current - 1));
+btnNext.addEventListener('click', () => goTo(current + 1));
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current + 1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current - 1);
+});
+
+/* ═══════════════════════════════════════════════
+   PALETTE
+═══════════════════════════════════════════════ */
+const C = {
+  male:    '#c47a1e',
+  female:  '#8b2e0e',
+  neutral: '#4a3d28',
+  sand:    '#d4a853',
+  rust:    '#8b2e0e',
+  bone:    '#e8d9b0',
+  dim:     '#6b6050',
+  bg:      '#0e0b07',
+  ash:     '#4a3d28',
+  posArea: 'rgba(180,140,40,0.2)',
+  negArea: 'rgba(120,30,10,0.2)',
+  posLine: '#c47a1e',
+  negLine: '#8b2e0e'
+};
+
+function genderColor(g) {
+  if (g === 'M') return C.male;
+  if (g === 'K') return C.female;
+  return C.neutral;
+}
+
+const tooltip = document.getElementById('tooltip');
+function showTip(html, e) {
+  tooltip.innerHTML = html;
+  tooltip.style.display = 'block';
+  tooltip.style.left = (e.pageX + 14) + 'px';
+  tooltip.style.top  = (e.pageY - 28) + 'px';
+}
+function hideTip() { tooltip.style.display = 'none'; }
+
+/* ═══════════════════════════════════════════════
+   SLIDE 2 — SPEAKERS CHART
+═══════════════════════════════════════════════ */
+let drawnSpeakers = false;
+function drawSpeakers() {
+  if (drawnSpeakers) return;
+  drawnSpeakers = true;
+
+  const container = document.getElementById('chart-speakers');
+  const cw = container.clientWidth;
+  const ch = container.clientHeight;
+
+  const margin = {top: 8, right: 90, bottom: 30, left: 145};
+  const W = cw - margin.left - margin.right;
+  const H = ch - margin.top - margin.bottom;
+
+  const svg = d3.select('#chart-speakers').append('svg')
+    .attr('width', cw).attr('height', ch);
+
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const data = [...TOP_SPEAKERS].sort((a,b) => b.word_count - a.word_count);
+
+  const x = d3.scaleLinear().domain([0, d3.max(data, d => d.word_count)]).range([0, W]);
+  const y = d3.scaleBand().domain(data.map(d => d.name)).range([0, H]).padding(0.22);
+
+  // grid
+  g.append('g').attr('class','grid').selectAll('line')
+    .data(x.ticks(5)).enter().append('line')
+    .attr('x1', d => x(d)).attr('x2', d => x(d))
+    .attr('y1', 0).attr('y2', H)
+    .attr('stroke', C.ash).attr('stroke-dasharray','3,4').attr('opacity',.4);
+
+  // bars
+  const bars = g.selectAll('.bar').data(data).enter().append('g');
+
+  bars.append('rect')
+    .attr('class','bar')
+    .attr('x', 0)
+    .attr('y', d => y(d.name))
+    .attr('height', y.bandwidth())
+    .attr('width', 0)
+    .attr('fill', d => genderColor(d.gender))
+    .attr('rx', 2)
+    .on('mouseover', (e, d) => {
+      showTip(`<strong>${d.name}</strong><br>${d.word_count.toLocaleString()} słów (${d.pct_of_total}%)`, e);
+    })
+    .on('mousemove', (e, d) => {
+      showTip(`<strong>${d.name}</strong><br>${d.word_count.toLocaleString()} słów (${d.pct_of_total}%)`, e);
+    })
+    .on('mouseout', hideTip)
+    .transition().duration(700).delay((d,i) => i*40)
+    .attr('width', d => x(d.word_count));
+
+  // value labels
+  bars.append('text')
+    .attr('x', d => x(d.word_count) + 6)
+    .attr('y', d => y(d.name) + y.bandwidth()/2 + 4)
+    .attr('fill', d => genderColor(d.gender))
+    .attr('font-family', "'Special Elite', cursive")
+    .attr('font-size', 11)
+    .text(d => `${d.word_count.toLocaleString()}`)
+    .attr('opacity', 0)
+    .transition().duration(700).delay((d,i) => i*40 + 300)
+    .attr('opacity', 1);
+
+  // y axis
+  g.append('g').call(d3.axisLeft(y).tickSize(0))
+    .attr('class','axis')
+    .call(a => a.select('.domain').remove())
+    .selectAll('text')
+    .attr('dx', -8)
+    .attr('fill', C.bone)
+    .style('font-size','11px');
+
+  // x axis
+  g.append('g').attr('transform', `translate(0,${H})`)
+    .call(d3.axisBottom(x).ticks(5).tickFormat(d => d.toLocaleString()))
+    .attr('class','axis');
+}
+
+/* ═══════════════════════════════════════════════
+   SLIDE 3 — EMOTION ARC
+═══════════════════════════════════════════════ */
+let drawnArc = false;
+function drawArc() {
+  if (drawnArc) return;
+  drawnArc = true;
+
+  const container = document.getElementById('chart-arc');
+  const cw = container.clientWidth;
+  const ch = container.clientHeight;
+
+  const margin = {top: 20, right: 30, bottom: 40, left: 52};
+  const W = cw - margin.left - margin.right;
+  const H = ch - margin.top - margin.bottom;
+
+  const svg = d3.select('#chart-arc').append('svg')
+    .attr('width', cw).attr('height', ch);
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const x = d3.scaleLinear().domain(d3.extent(EMOTION_ARC, d => d.scene)).range([0, W]);
+  const y = d3.scaleLinear().domain([-0.5, 0.25]).range([H, 0]);
+
+  // zero line
+  const y0 = y(0);
+
+  // positive area
+  const areaPos = d3.area()
+    .x(d => x(d.scene))
+    .y0(d => Math.min(y(d.rolling_valence), y0))
+    .y1(y0)
+    .curve(d3.curveCatmullRom);
+
+  // negative area
+  const areaNeg = d3.area()
+    .x(d => x(d.scene))
+    .y0(y0)
+    .y1(d => Math.max(y(d.rolling_valence), y0))
+    .curve(d3.curveCatmullRom);
+
+  g.append('path').datum(EMOTION_ARC)
+    .attr('fill', C.posArea).attr('d', areaPos);
+
+  g.append('path').datum(EMOTION_ARC)
+    .attr('fill', C.negArea).attr('d', areaNeg);
+
+  // zero line
+  g.append('line')
+    .attr('x1', 0).attr('x2', W)
+    .attr('y1', y0).attr('y2', y0)
+    .attr('stroke', C.dim).attr('stroke-width', 1.5)
+    .attr('stroke-dasharray','6,4');
+
+  // line
+  const line = d3.line()
+    .x(d => x(d.scene))
+    .y(d => y(d.rolling_valence))
+    .curve(d3.curveCatmullRom);
+
+  const path = g.append('path').datum(EMOTION_ARC)
+    .attr('fill','none')
+    .attr('stroke', C.sand)
+    .attr('stroke-width', 2.5)
+    .attr('d', line);
+
+  const totalLen = path.node().getTotalLength();
+  path.attr('stroke-dasharray', totalLen).attr('stroke-dashoffset', totalLen)
+    .transition().duration(1600).ease(d3.easeQuadInOut)
+    .attr('stroke-dashoffset', 0);
+
+  // hover overlay
+  const bisect = d3.bisector(d => d.scene).left;
+  const vline = g.append('line').attr('y1', 0).attr('y2', H)
+    .attr('stroke', C.rust).attr('stroke-width',1).attr('opacity',0);
+  const dot = g.append('circle').attr('r', 5)
+    .attr('fill', C.sand).attr('stroke', C.rust).attr('stroke-width',2).attr('opacity',0);
+
+  g.append('rect').attr('width', W).attr('height', H).attr('fill','transparent')
+    .on('mousemove', function(e) {
+      const [mx] = d3.pointer(e);
+      const sceneVal = x.invert(mx);
+      const idx = bisect(EMOTION_ARC, sceneVal, 1);
+      const d = EMOTION_ARC[Math.min(idx, EMOTION_ARC.length-1)];
+      vline.attr('x1', x(d.scene)).attr('x2', x(d.scene)).attr('opacity', .6);
+      dot.attr('cx', x(d.scene)).attr('cy', y(d.rolling_valence)).attr('opacity', 1);
+      showTip(`Scena ${d.scene}<br>Walencja: <strong>${d.rolling_valence.toFixed(3)}</strong>`, e);
+    })
+    .on('mouseout', () => { vline.attr('opacity',0); dot.attr('opacity',0); hideTip(); });
+
+  // axes
+  g.append('g').attr('transform', `translate(0,${H})`)
+    .call(d3.axisBottom(x).ticks(10).tickFormat(d => `sc.${d}`))
+    .attr('class','axis');
+
+  g.append('g').call(d3.axisLeft(y).ticks(6).tickFormat(d => d.toFixed(2)))
+    .attr('class','axis');
+
+  // labels
+  g.append('text').attr('x',4).attr('y', y(0.15)).attr('fill', C.male)
+    .attr('font-family',"'Special Elite',cursive").attr('font-size',10)
+    .text('pozytywna');
+  g.append('text').attr('x',4).attr('y', y(-0.35)).attr('fill', C.rust)
+    .attr('font-family',"'Special Elite',cursive").attr('font-size',10)
+    .text('negatywna');
+
+  // annotation markers
+  const annotations = [
+    {scene:18, label:'szczyt radości (akt II)', dy:-18},
+    {scene:52, label:'najciemniejszy punkt', dy:18}
+  ];
+  annotations.forEach(a => {
+    g.append('circle').attr('cx', x(a.scene)).attr('cy', y(EMOTION_ARC.find(d=>d.scene===a.scene)?.rolling_valence||0))
+      .attr('r',5).attr('fill',C.rust).attr('stroke',C.sand).attr('stroke-width',1.5);
+    g.append('text')
+      .attr('x', x(a.scene)).attr('y', y(EMOTION_ARC.find(d=>d.scene===a.scene)?.rolling_valence||0) + a.dy)
+      .attr('fill', C.bone).attr('font-size', 10).attr('font-family',"'Special Elite',cursive")
+      .attr('text-anchor','middle').text(a.label);
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   SLIDE 4 — EMOTIONS × GENDER
+═══════════════════════════════════════════════ */
+let drawnEmotions = false;
+function drawEmotions() {
+  if (drawnEmotions) return;
+  drawnEmotions = true;
+
+  const emotions = ['radość','smutek','złość','strach','zaskoczenie','neutralna'];
+  const emotionColors = {
+    'radość':     '#c8a030',
+    'smutek':     '#4a6080',
+    'złość':      '#8b2e0e',
+    'strach':     '#5a3060',
+    'zaskoczenie':'#2a6040',
+    'neutralna':  '#4a3d28'
+  };
+
+  // build legend
+  const legendEl = document.getElementById('emotion-legend');
+  emotions.forEach(em => {
+    const span = document.createElement('span');
+    span.innerHTML = `<span class="dot" style="background:${emotionColors[em]}"></span>${em}`;
+    legendEl.appendChild(span);
+  });
+
+  const container = document.getElementById('chart-emotions');
+  const cw = container.clientWidth;
+  const ch = container.clientHeight;
+
+  const margin = {top: 10, right: 30, bottom: 50, left: 50};
+  const W = cw - margin.left - margin.right;
+  const H = ch - margin.top - margin.bottom;
+
+  const svg = d3.select('#chart-emotions').append('svg')
+    .attr('width', cw).attr('height', ch);
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const genders = ['K', 'M'];
+  const x0 = d3.scaleBand().domain(emotions).range([0, W]).paddingInner(0.25);
+  const x1 = d3.scaleBand().domain(genders).range([0, x0.bandwidth()]).padding(0.08);
+  const y  = d3.scaleLinear().domain([0, 60]).range([H, 0]);
+
+  // grid
+  g.append('g').selectAll('line')
+    .data(y.ticks(6)).enter().append('line')
+    .attr('x1',0).attr('x2',W)
+    .attr('y1', d => y(d)).attr('y2', d => y(d))
+    .attr('stroke', C.ash).attr('stroke-dasharray','3,4').attr('opacity',.4);
+
+  emotions.forEach(em => {
+    const xGrp = x0(em);
+    genders.forEach(gd => {
+      const val = EMOTION_BY_GENDER[gd][em];
+      const xPos = xGrp + x1(gd);
+      const bw = x1.bandwidth();
+
+      g.append('rect')
+        .attr('x', xPos).attr('y', H)
+        .attr('width', bw).attr('height', 0)
+        .attr('fill', genderColor(gd))
+        .attr('rx', 2).attr('opacity', .88)
+        .on('mouseover', (e) => {
+          showTip(`${em} · ${gd==='M'?'Mężczyźni':'Kobiety'}<br><strong>${val.toFixed(1)}%</strong>`, e);
+        })
+        .on('mousemove', (e) => {
+          showTip(`${em} · ${gd==='M'?'Mężczyźni':'Kobiety'}<br><strong>${val.toFixed(1)}%</strong>`, e);
+        })
+        .on('mouseout', hideTip)
+        .transition().duration(700).delay(emotions.indexOf(em)*60 + (gd==='M'?50:0))
+        .attr('y', y(val)).attr('height', H - y(val));
+
+      if (val >= 3) {
+        g.append('text')
+          .attr('x', xPos + bw/2)
+          .attr('y', y(val) - 4)
+          .attr('text-anchor','middle')
+          .attr('fill', genderColor(gd))
+          .attr('font-size', 9)
+          .attr('font-family',"'Special Elite',cursive")
+          .text(val.toFixed(1))
+          .attr('opacity',0)
+          .transition().duration(500).delay(emotions.indexOf(em)*60+400).attr('opacity',1);
+      }
+    });
+  });
+
+  // axes
+  g.append('g').attr('transform',`translate(0,${H})`)
+    .call(d3.axisBottom(x0).tickSize(0)).attr('class','axis')
+    .call(a => a.select('.domain').remove())
+    .selectAll('text').attr('fill', C.bone).style('font-size','11px');
+
+  g.append('g').call(d3.axisLeft(y).ticks(6).tickFormat(d => d+'%'))
+    .attr('class','axis');
+
+  // gender label
+  const legendData = [{label:'K — Kobiety', color: C.female}, {label:'M — Mężczyźni', color: C.male}];
+  const lx = W - 140;
+  legendData.forEach((d,i) => {
+    g.append('rect').attr('x', lx).attr('y', 4 + i*18).attr('width',12).attr('height',12).attr('fill',d.color).attr('rx',2);
+    g.append('text').attr('x', lx+16).attr('y', 14 + i*18).attr('fill', C.bone).attr('font-size',11)
+      .attr('font-family',"'Special Elite',cursive").text(d.label);
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   SLIDE 5 — NETWORK
+═══════════════════════════════════════════════ */
+let drawnNetwork = false;
+function drawNetwork() {
+  if (drawnNetwork) return;
+  drawnNetwork = true;
+
+  const container = document.getElementById('chart-network');
+  const cw = container.clientWidth;
+  const ch = container.clientHeight;
+
+  const svg = d3.select('#network-svg')
+    .attr('width', cw).attr('height', ch);
+
+  const g = svg.append('g');
+
+  // zoom
+  svg.call(d3.zoom().scaleExtent([0.3, 4])
+    .on('zoom', e => g.attr('transform', e.transform)));
+
+  // filter only meaningful nodes (word_count > 0 or has edges)
+  const nodeIds = new Set(NET_NODES.map(n => n.id));
+  const edgeIds = new Set();
+  NET_EDGES_RAW.forEach(e => { edgeIds.add(e.source); edgeIds.add(e.target); });
+  const filteredNodes = NET_NODES.filter(n => n.word_count > 0 || edgeIds.has(n.id));
+  const filteredNodeIds = new Set(filteredNodes.map(n => n.id));
+  const filteredEdges = NET_EDGES_RAW.filter(e => filteredNodeIds.has(e.source) && filteredNodeIds.has(e.target));
+
+  const wordMax = d3.max(filteredNodes, d => d.word_count);
+  const rScale = d3.scaleSqrt().domain([0, wordMax]).range([4, 28]);
+  const wScale = d3.scaleLinear().domain([1, 5]).range([0.5, 4]);
+
+  // top10 by word_count
+  const top10 = new Set(
+    [...filteredNodes].sort((a,b) => b.word_count - a.word_count).slice(0,10).map(n => n.id)
+  );
+
+  // build adjacency for card
+  const adj = {};
+  filteredEdges.forEach(e => {
+    if (!adj[e.source]) adj[e.source] = [];
+    if (!adj[e.target]) adj[e.target] = [];
+    adj[e.source].push({id: e.target, weight: e.weight});
+    adj[e.target].push({id: e.source, weight: e.weight});
+  });
+
+  const links = filteredEdges.map(e => ({...e}));
+  const nodes = filteredNodes.map(n => ({...n}));
+
+  const sim = d3.forceSimulation(nodes)
+    .force('link', d3.forceLink(links).id(d => d.id).distance(d => 80 / (d.weight+0.5)))
+    .force('charge', d3.forceManyBody().strength(-120))
+    .force('center', d3.forceCenter(cw/2, ch/2))
+    .force('collision', d3.forceCollide().radius(d => rScale(d.word_count) + 4));
+
+  const link = g.append('g').selectAll('line').data(links).enter().append('line')
+    .attr('stroke', '#3a2a12')
+    .attr('stroke-width', d => wScale(d.weight))
+    .attr('opacity', .7);
+
+  const nodeG = g.append('g').selectAll('g').data(nodes).enter().append('g')
+    .call(d3.drag()
+      .on('start', (e,d) => { if (!e.active) sim.alphaTarget(.3).restart(); d.fx=d.x; d.fy=d.y; })
+      .on('drag',  (e,d) => { d.fx=e.x; d.fy=e.y; })
+      .on('end',   (e,d) => { if (!e.active) sim.alphaTarget(0); d.fx=null; d.fy=null; }));
+
+  nodeG.append('circle')
+    .attr('r', d => rScale(d.word_count))
+    .attr('fill', d => genderColor(d.gender))
+    .attr('stroke', d => d3.color(genderColor(d.gender)).brighter(0.5))
+    .attr('stroke-width', 1.2);
+
+  // labels for top10
+  nodeG.append('text')
+    .attr('dy', d => -rScale(d.word_count) - 3)
+    .attr('text-anchor','middle')
+    .attr('fill', C.bone)
+    .attr('font-size', d => top10.has(d.id) ? 11 : 9)
+    .attr('font-family',"'Special Elite',cursive")
+    .attr('opacity', d => top10.has(d.id) ? 1 : 0)
+    .text(d => d.id);
+
+  // hover / click
+  const netTip = document.getElementById('net-tooltip');
+  const nodeCard = document.getElementById('node-card');
+  let selected = null;
+
+  nodeG.on('mouseover', function(e, d) {
+    if (selected) return;
+    netTip.innerHTML = `<strong>${d.id}</strong><br>${d.word_count.toLocaleString()} słów · ${d.dominant_emotion}`;
+    netTip.style.display = 'block';
+    netTip.style.left = (e.offsetX + 14) + 'px';
+    netTip.style.top  = (e.offsetY - 28) + 'px';
+    // show label
+    d3.select(this).select('text').attr('opacity',1);
+  })
+  .on('mousemove', function(e) {
+    netTip.style.left = (e.offsetX + 14) + 'px';
+    netTip.style.top  = (e.offsetY - 28) + 'px';
+  })
+  .on('mouseout', function(e, d) {
+    netTip.style.display = 'none';
+    if (!selected) {
+      if (!top10.has(d.id)) d3.select(this).select('text').attr('opacity',0);
+    }
+  })
+  .on('click', function(e, d) {
+    e.stopPropagation();
+    if (selected === d.id) {
+      // deselect
+      selected = null;
+      link.attr('opacity',.7).attr('stroke','#3a2a12');
+      nodeG.select('circle').attr('opacity',1);
+      nodeG.select('text').attr('opacity', nd => top10.has(nd.id) ? 1 : 0);
+      nodeCard.style.display = 'none';
+      return;
+    }
+    selected = d.id;
+    const connIds = new Set((adj[d.id]||[]).map(n => n.id));
+    connIds.add(d.id);
+
+    link.attr('opacity', l => (l.source.id===d.id||l.target.id===d.id) ? 1 : 0.08)
+        .attr('stroke', l => (l.source.id===d.id||l.target.id===d.id) ? C.sand : '#3a2a12');
+    nodeG.select('circle').attr('opacity', nd => connIds.has(nd.id) ? 1 : 0.15);
+    nodeG.select('text').attr('opacity', nd => connIds.has(nd.id) ? 1 : 0);
+
+    // card
+    const top3 = (adj[d.id]||[]).sort((a,b)=>b.weight-a.weight).slice(0,3).map(n=>n.id).join(', ');
+    nodeCard.innerHTML = `
+      <h4>${d.id}</h4>
+      <div>Płeć: <strong>${d.gender==='M'?'Mężczyzna':d.gender==='K'?'Kobieta':'N/A'}</strong></div>
+      <div>Słowa: <strong>${d.word_count.toLocaleString()}</strong></div>
+      <div>Sceny: <strong>${d.scene_count}</strong></div>
+      <div>Dominująca emocja: <strong>${d.dominant_emotion}</strong></div>
+      <div>Śr. walencja: <strong>${d.avg_valence.toFixed(3)}</strong></div>
+      <div>Główni sąsiedzi: <strong>${top3||'—'}</strong></div>
+      <div style="margin-top:8px;font-size:10px;color:var(--dim)">Kliknij ponownie, by odblokować</div>
+    `;
+    nodeCard.style.display = 'block';
+  });
+
+  svg.on('click', () => {
+    if (selected) {
+      selected = null;
+      link.attr('opacity',.7).attr('stroke','#3a2a12');
+      nodeG.select('circle').attr('opacity',1);
+      nodeG.select('text').attr('opacity', nd => top10.has(nd.id) ? 1 : 0);
+      nodeCard.style.display = 'none';
+    }
+  });
+
+  sim.on('tick', () => {
+    link
+      .attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+      .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+    nodeG.attr('transform', d => `translate(${d.x},${d.y})`);
+  });
+}
+
+/* ── init ── */
+goTo(0);
+</script>
+</body>
+</html>
